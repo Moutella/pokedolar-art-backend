@@ -1,0 +1,14 @@
+{
+  "name": "pokedolar-art-backend",
+  "version": "0.0.1",
+  "description": "Backend for Pokedolar website",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Moutella",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
