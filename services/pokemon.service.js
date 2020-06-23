@@ -2,7 +2,7 @@ const Pokemon = require('../models/pokemon');
 
 async function getPokemons(){
   try{
-    return Pokemon.find().select(['id', 'name']).sort('id')
+    return Pokemon.find().select(['id', 'name', 'pokeArts', 'postAmount']).sort('id')
   }
   catch (e){
     throw new Error("Could not get all pokemons, please try again later")
@@ -23,7 +23,7 @@ async function addPokemon(pokemon) {
 
 async function getPokemon(pokeid) {
   try {
-    return Pokemon.findOne({ id: pokeid })
+    return Pokemon.findOne({ id: pokeid }).select(['id', 'name', 'pokeArts', 'postAmount'])
   }
   catch (e){
     console.log(e)

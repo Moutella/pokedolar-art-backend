@@ -24,14 +24,14 @@ async function getPokemons(req, res) {
  * @returns void
  */
 async function addPokemon(req, res) {
-  if (!req.body.pokemon.name || !req.body.pokemon.id) {
+  if (!req.body.name || !req.body.id) {
     console.log(req.body);
     res.status(403).end();
   }
 
-  let pokemon = req.body.pokemon;
-  pokemon.id = sanitizeHtml(pokemon.id);
-  pokemon.name = sanitizeHtml(pokemon.name);
+  let pokemon = {};
+  pokemon.id = sanitizeHtml(req.body.id);
+  pokemon.name = sanitizeHtml(req.body.name);
 
   try {
     let newPokemon = await PokemonService.addPokemon(pokemon);
