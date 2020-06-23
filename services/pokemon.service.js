@@ -1,23 +1,52 @@
 const Pokemon = require('../models/pokemon');
-const { response } = require('express');
 
 async function getPokemons(){
-    return Pokemon.find().sort('id')
+  try{
+    return Pokemon.find().select(['id', 'name']).sort('id')
+  }
+  catch (e){
+    throw new Error("Could not get all pokemons, please try again later")
+  }
+
 }
 
-function addPokemon(pokemon) {
+async function addPokemon(pokemon) {
   
   const newPokemon = new Pokemon(pokemon);
-  newPokemon.save((err, saved) => {
-    if (err) {
-      throw new Error("Could not save this pokemon to the database")
-    }
-    return 1
-  });
+  try {
+    return await newPokemon.save()
+  }
+  catch (e){
+    throw new Error("Could not save this pokemon to the database")
+  }
 }
 
+async function getPokemon(pokeid) {
+  try {
+    return Pokemon.findOne({ id: pokeid })
+  }
+  catch (e){
+    console.log(e)
+    throw new Error(`Could not find pokemon wth id ${pokeid}`)
+  }
+  
+    
+}
+async function deletePokemon(pokeid) {
+  try {
+    
+    let pokemon = await Pokemon.findOne({ id: pokeid });
+    let remove = await pokemon.remove();
+    return pokemon
+    }
+  catch (e) {
+    throw new Error(`Could not delete ${pokeid}`)
+  }
+}
 
 module.exports = {
   getPokemons,
-  addPokemon
+  addPokemon,
+  getPokemon,
+  deletePokemon
 }

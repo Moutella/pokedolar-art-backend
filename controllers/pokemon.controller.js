@@ -1,7 +1,5 @@
-const sanitizeHtml = require('sanitize-html');
-const PokemonService = require('../services/pokemon.service');
-const pokemon = require('../models/pokemon');
-const sanitize = require('sanitize-html');
+const sanitizeHtml = require("sanitize-html");
+const PokemonService = require("../services/pokemon.service");
 
 /**
  * Get all pokemons
@@ -10,16 +8,13 @@ const sanitize = require('sanitize-html');
  * @returns void
  */
 async function getPokemons(req, res) {
-  try{
-    returnValue = await PokemonService.getPokemons()
-    console.log(returnValue)
-    res.json(returnValue)
+  try {
+    returnValue = await PokemonService.getPokemons();
+    res.json(returnValue);
+  } catch (e) {
+    console.log(e);
+    return res.json({ error: e });
   }
-  catch (e){
-    console.log(e)
-    return res.json({error: "Something went wrong"})
-  }
-    
 }
 
 /**
@@ -28,22 +23,22 @@ async function getPokemons(req, res) {
  * @param res
  * @returns void
  */
-function addPokemon(req, res) {
-  
-  if (!req.body.pokemon.name || !req.body.pokemon.id ) {
+async function addPokemon(req, res) {
+  if (!req.body.pokemon.name || !req.body.pokemon.id) {
     console.log(req.body);
     res.status(403).end();
   }
+
   let pokemon = req.body.pokemon;
   pokemon.id = sanitizeHtml(pokemon.id);
   pokemon.name = sanitizeHtml(pokemon.name);
-  try{
-    PokemonService.addPokemon(pokemon)
-    res.json({'success': true});
-  }
-  catch (e) {
+
+  try {
+    let newPokemon = await PokemonService.addPokemon(pokemon);
+    res.json({ success: true, pokemon: newPokemon });
+  } catch (e) {
     console.log(e);
-    res.status(403).json({error: "True"})
+    res.status(403).json({ error: e });
   }
 }
 
@@ -53,13 +48,20 @@ function addPokemon(req, res) {
  * @param res
  * @returns void
  */
-function getPokemon(req, res) {
-  Pokemon.findOne({ cuid: req.params.cuid }).exec((err, pokemon) => {
-    if (err) {
-      res.status(500).send(err);
-    }
-    res.json({ pokemon });
-  });
+async function getPokemon(req, res) {
+  if (!req.params.pokeid){
+    console.log(req.body);
+    res.status(403).end();
+  }
+
+  try {
+    let pokeid = req.params.pokeid
+    let pokemon = await PokemonService.getPokemon(pokeid);
+    return res.json({pokemon: pokemon})
+  }
+  catch (e) {
+    res.status(403).json({ error: e });
+  }
 }
 
 /**
@@ -68,21 +70,25 @@ function getPokemon(req, res) {
  * @param res
  * @returns void
  */
-function deletePokemon(req, res) {
-  Pokemon.findOne({ cuid: req.params.cuid }).exec((err, pokemon) => {
-    if (err) {
-      res.status(500).send(err);
-    }
-
-    pokemon.remove(() => {
-      res.status(200).end();
-    });
-  });
+async function deletePokemon(req, res) {
+  if (!req.body.pokemon.id) {
+    console.log(req.body);
+    res.status(403).end();
+  }
+  let pokeid = req.body.pokemon.id;
+  try {
+    let deleted = await PokemonService.deletePokemon(pokeid);
+    return res.json({success: `Successfuly deleted ${pokeid}:${deleted.name}`})
+  }
+  catch (e){
+    console.log(e)
+    res.status(403).json({ error: e.message });
+  }
 }
 
 module.exports = {
   getPokemons,
   getPokemon,
   addPokemon,
-  deletePokemon
-}
+  deletePokemon,
+};
