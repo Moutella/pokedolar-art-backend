@@ -26,7 +26,6 @@ async function getPokemon(pokeid) {
     return Pokemon.findOne({ id: pokeid }).select(['id', 'name', 'pokeArts', 'postAmount'])
   }
   catch (e){
-    console.log(e)
     throw new Error(`Could not find pokemon wth id ${pokeid}`)
   }
   

@@ -9,10 +9,10 @@ const fileUtils = require('../utils/fileUtils');
  */
 async function getRandomPokeArt(req, res) {
   try {
-    returnValue = await PokeArtService.getRandomPokeArt();
+    let returnValue = await PokeArtService.getRandomPokeArt();
     res.json(returnValue);
   } catch (e) {
-    console.log(e);
+    
     return res.json({ error: e });
   }
 }
@@ -24,10 +24,8 @@ async function getRandomPokeArt(req, res) {
  * @returns void
  */
 async function addPokeArt(req, res) {
-  console.log(req.body);
-  console.log(req.files);
   if (!req.body.artName || !req.body.pokeid || !req.files) {
-    console.log(req.body);
+
     res.status(403).end();
   }
   
@@ -41,7 +39,6 @@ async function addPokeArt(req, res) {
     PokeArtService.addPokeArt(file, pokeId, name, author);
     res.json({ success: true });
   } catch (e) {
-    console.log(e);
     fileUtils.removeFile(file.file);
     res.status(403).json({ error: e });
   }
@@ -54,15 +51,13 @@ async function addPokeArt(req, res) {
  * @returns void
  */
 async function getPokeArt(req, res) {
-  if (!req.params.pokeid){
-    console.log(req.body);
+  if (!req.body){
     res.status(403).end();
   }
-
   try {
-    let pokeid = req.params.pokeid
-    let pokemon = await PokemonService.getPokemon(pokeid);
-    return res.json({pokemon: pokemon})
+    let artid = req.params.artid
+    let pokeart = await PokeArtService.getPokeArt(artid);
+    return res.json({pokeart: pokeart})
   }
   catch (e) {
     res.status(403).json({ error: e });
@@ -77,7 +72,6 @@ async function getPokeArt(req, res) {
  */
 async function deletePokeArt(req, res) {
   if (!req.body.pokeart.id) {
-    console.log(req.body);
     res.status(403).end();
   }
   let pokeArtId = req.body.pokeart.id;

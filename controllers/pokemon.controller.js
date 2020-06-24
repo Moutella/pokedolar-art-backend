@@ -12,7 +12,6 @@ async function getPokemons(req, res) {
     returnValue = await PokemonService.getPokemons();
     res.json(returnValue);
   } catch (e) {
-    console.log(e);
     return res.json({ error: e });
   }
 }
@@ -25,7 +24,6 @@ async function getPokemons(req, res) {
  */
 async function addPokemon(req, res) {
   if (!req.body.name || !req.body.id) {
-    console.log(req.body);
     res.status(403).end();
   }
 
@@ -37,7 +35,6 @@ async function addPokemon(req, res) {
     let newPokemon = await PokemonService.addPokemon(pokemon);
     res.json({ success: true, pokemon: newPokemon });
   } catch (e) {
-    console.log(e);
     res.status(403).json({ error: e });
   }
 }
@@ -50,7 +47,6 @@ async function addPokemon(req, res) {
  */
 async function getPokemon(req, res) {
   if (!req.params.pokeid){
-    console.log(req.body);
     res.status(403).end();
   }
 
@@ -72,7 +68,6 @@ async function getPokemon(req, res) {
  */
 async function deletePokemon(req, res) {
   if (!req.body.pokemon.id) {
-    console.log(req.body);
     res.status(403).end();
   }
   let pokeid = req.body.pokemon.id;
@@ -81,7 +76,6 @@ async function deletePokemon(req, res) {
     return res.json({success: `Successfuly deleted ${pokeid}:${deleted.name}`})
   }
   catch (e){
-    console.log(e)
     res.status(403).json({ error: e.message });
   }
 }
