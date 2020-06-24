@@ -19,7 +19,8 @@ const pokeArtSchema = new Schema({
   
 
   //admin
-  approved: { type: 'Boolean', required: true, default: false}
+  approved: { type: 'Boolean', required: true, default: false},
+  reviewed: { type: 'Boolean', required: true, default: false},
 });
 
 

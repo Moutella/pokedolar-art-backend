@@ -27,7 +27,6 @@ app.use('/', pokemonRoutes);
 app.use('/', pokeArtRoutes);
 
 app.use('/static', Express.static( __dirname + '/public'));
-console.log(__dirname+'pokearts')
 app.use('/pokearts', Express.static(__dirname + '/pokearts'));
 
 

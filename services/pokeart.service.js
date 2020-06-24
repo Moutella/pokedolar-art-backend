@@ -1,5 +1,6 @@
 const PokeArt = require('../models/pokeart');
-const PokemonService = require('../services/pokemon.service')
+const PokemonService = require('../services/pokemon.service');
+const Pokemon = require('../models/pokemon');
 
 
 
@@ -25,8 +26,6 @@ async function getRandomPokeArt(){
 async function addPokeArt(pokeart, pokeid, name, author) {
   
   let pokemon = await PokemonService.getPokemon(pokeid);
-  console.log(pokemon);
-  console.log(pokemon._id);
 
   
   try {
@@ -34,7 +33,9 @@ async function addPokeArt(pokeart, pokeid, name, author) {
       name: name,
       pokemon: pokemon._id,
       filePath: `/${pokeart.uuid}/${pokeart.field}/${pokeart.filename}`,
+      author: author
     });
+    
     await newPokeArt.save()
     return true;
   }
@@ -44,9 +45,9 @@ async function addPokeArt(pokeart, pokeid, name, author) {
   }
 }
 
-async function getPokeArt(pokeid) {
+async function getPokeArt(pokeartId) {
   try {
-    return PokeArt.findOne({ id: pokeid })
+    return await PokeArt.findOne({ id: pokeartId })
   }
   catch (e){
     
@@ -65,9 +66,45 @@ async function deletePokeArt(pokeid) {
   }
 }
 
+
+
+async function approvePokeArt(pokeartId) {
+  try{
+    let approvedPokeArt = await PokeArt.findOne({_id:pokeartId});
+    approvedPokeArt.reviewed = true;
+    approvedPokeArt.approved = true;
+    let pokemon = await Pokemon.findById(approvedPokeArt.pokemon).populate('pokeArts');
+    await pokemon.pokeArts.addToSet(approvedPokeArt);
+    await Promise.all([approvedPokeArt.save(), pokemon.save()]);
+    return true;
+  }
+  catch (e){
+    console.log(e);
+    throw new Error("Could not approve PokeArt")
+  }
+}
+
+async function revokePokeArt(pokeartId) {
+  try{
+    let revokedPokeArt = await PokeArt.findOne({_id:pokeartId});
+    revokedPokeArt.reviewed = true;
+    revokedPokeArt.approved = false;
+    let pokemon = await Pokemon.findById(revokedPokeArt.pokemon);
+    await pokemon.pokeArts.pull(revokedPokeArt);
+    await Promise.all([revokedPokeArt.save(), pokemon.save()]);
+    return true;
+  }
+  catch (e){
+    throw new Error("Could not approve PokeArt");
+  }
+}
+
+
 module.exports = {
   getRandomPokeArt,
   addPokeArt,
   getPokeArt,
-  deletePokeArt
+  deletePokeArt,
+  approvePokeArt,
+  revokePokeArt
 }

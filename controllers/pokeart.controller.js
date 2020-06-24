@@ -10,7 +10,7 @@ const fileUtils = require('../utils/fileUtils');
 async function getRandomPokeArt(req, res) {
   try {
     let returnValue = await PokeArtService.getRandomPokeArt();
-    res.json(returnValue);
+    return res.json(returnValue);
   } catch (e) {
     
     return res.json({ error: e });
@@ -71,15 +71,46 @@ async function getPokeArt(req, res) {
  * @returns void
  */
 async function deletePokeArt(req, res) {
-  if (!req.body.pokeart.id) {
+  if (!req.body.id) {
     res.status(403).end();
   }
-  let pokeArtId = req.body.pokeart.id;
+  let pokeArtId = req.body.id;
   try {
-    let deleted = await PokemonService.deletePokemon(pokeArtId);
+    let deleted = await PokeArtService.deletePokeArt(pokeArtId);
     return res.json({success: `Successfuly deleted ${pokeArtId}:${deleted.name}`})
   }
   catch (e){
+    res.status(403).json({ error: e });
+  }
+}
+
+async function approvePokeArt(req, res) {
+  if (!req.query.id) {
+    return res.status(403).end();
+  }
+  
+  let pokeArtId = req.query.id;
+
+  try {
+    await PokeArtService.approvePokeArt(pokeArtId);
+    return res.json({success: `Approved pokeart ${pokeArtId}`})
+  }
+  catch(e){
+    return res.status(403).json({ error: e });
+  }
+}
+
+async function revokePokeArt(req, res) {
+  if (!req.query.id) {
+    return res.status(403).end();
+  }
+  
+  let pokeArtId = req.query.id;
+  try {
+    await PokeArtService.revokePokeArt(pokeArtId);
+    return res.json({success: `Revoked pokeart ${pokeArtId}`})
+  }
+  catch(e){
     res.status(403).json({ error: e });
   }
 }
@@ -89,4 +120,6 @@ module.exports = {
   getPokeArt,
   addPokeArt,
   deletePokeArt,
+  approvePokeArt,
+  revokePokeArt
 };
