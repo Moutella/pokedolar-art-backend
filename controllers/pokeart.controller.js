@@ -36,8 +36,8 @@ async function addPokeArt(req, res) {
   //add author later
   let author = null;
   try {
-    PokeArtService.addPokeArt(file, pokeId, name, author);
-    res.json({ success: true });
+    let pokeArtId = await PokeArtService.addPokeArt(file, pokeId, name, author);
+    res.json({ success: pokeArtId });
   } catch (e) {
     fileUtils.removeFile(file.file);
     res.status(403).json({ error: e });
@@ -71,47 +71,37 @@ async function getPokeArt(req, res) {
  * @returns void
  */
 async function deletePokeArt(req, res) {
-  if (!req.body.id) {
-    res.status(403).end();
+  if (!req.query.id) {
+    return res.status(403).end();
   }
-  let pokeArtId = req.body.id;
+  let pokeArtId = req.query.id;
   try {
     let deleted = await PokeArtService.deletePokeArt(pokeArtId);
     return res.json({success: `Successfuly deleted ${pokeArtId}:${deleted.name}`})
   }
   catch (e){
-    res.status(403).json({ error: e });
-  }
-}
-
-async function approvePokeArt(req, res) {
-  if (!req.query.id) {
-    return res.status(403).end();
-  }
-  
-  let pokeArtId = req.query.id;
-
-  try {
-    await PokeArtService.approvePokeArt(pokeArtId);
-    return res.json({success: `Approved pokeart ${pokeArtId}`})
-  }
-  catch(e){
     return res.status(403).json({ error: e });
   }
 }
 
-async function revokePokeArt(req, res) {
+async function changeApprovalPokeArt(req, res) {
   if (!req.query.id) {
     return res.status(403).end();
   }
   
   let pokeArtId = req.query.id;
+  let status = req.query.status;
+  
   try {
-    await PokeArtService.revokePokeArt(pokeArtId);
-    return res.json({success: `Revoked pokeart ${pokeArtId}`})
+    await PokeArtService.changeApprovalPokeArt(pokeArtId, status);
+    status_string = "Revoked"
+    if (status != 'false'){
+      status_string = "Approved"
+    }
+    return res.json({success: `${status_string} pokeart ${pokeArtId}`})
   }
   catch(e){
-    res.status(403).json({ error: e });
+    return res.status(403).json({ error: e });
   }
 }
 
@@ -120,6 +110,5 @@ module.exports = {
   getPokeArt,
   addPokeArt,
   deletePokeArt,
-  approvePokeArt,
-  revokePokeArt
+  changeApprovalPokeArt
 };
