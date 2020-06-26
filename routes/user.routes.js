@@ -6,8 +6,8 @@ const passport = require("passport");
 const TwitterStrategy = require("passport-twitter").Strategy;
 const JwtStrategy = require('passport-jwt').Strategy, ExtractJwt = require('passport-jwt').ExtractJwt;
 const jwt = require('jsonwebtoken')
-
 const User = require('../models/user');
+
 
 passport.use('twitter',
   new TwitterStrategy(
@@ -37,12 +37,19 @@ passport.use('twitter',
     }
   )
 );
-
+const jwtCookie = function(req){
+  let token = null;
+  if(req && req.cookies)
+    token = req.cookies['JWT'];
+  return token;
+}
 passport.use('jwt', new JwtStrategy(
-  { jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('JWT'),
+  { jwtFromRequest: req => jwtCookie(req),
     secretOrKey: serverConfig.SECRET,
   },
   async function(jwt_payload, cb) {
+    console.log("teste");
+    console.log(jwt_payload);
     user = await User.findOne({twitterId: jwt_payload.twitterId});
     cb(null, user)
 }));
@@ -56,6 +63,10 @@ router
       let token = jwt.sign({
         twitterId: req.user.twitterId
       }, serverConfig.SECRET);
+      res.cookie('JWT', token, {
+        maxAge: new Date(Date.now() + 9999999),
+        httpOnly: true
+      })
       return res.json({user: req.user, token: `JWT ${token}`});
     }
   );

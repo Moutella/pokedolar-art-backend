@@ -4,9 +4,11 @@ const passport = require('passport');
 const Express = require('express');
 const bb = require('express-busboy')
 const routes = require('./routes');
-
+const helmet = require('helmet')
+const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const app = new Express();
+
 bb.extend(app, {
   upload: true,
   path: __dirname + '/pokearts',
@@ -14,11 +16,12 @@ bb.extend(app, {
 });
 app.use(cors())
 app.use(require('express-session')({ secret: serverConfig.SECRET, resave: true, saveUninitialized: true }));
-
+app.use(cookieParser())
 // Initialize Passport and restore authentication state, if any, from the
 // session.
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(helmet());
 passport.serializeUser(function(user, cb) {
   cb(null, user);
 });
