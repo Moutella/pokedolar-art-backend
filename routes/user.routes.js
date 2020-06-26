@@ -21,10 +21,7 @@ passport.use('twitter',
       let user = await User.findOne({twitterId:profile.id});
       
       if (user){
-        let token = jwt.sign({
-          twitterId: user.twitterId
-        }, serverConfig.SECRET);
-        console.log(`JWT ${token}`);
+        
         return cb(null,user);
         
       }
@@ -33,10 +30,8 @@ passport.use('twitter',
           twitterId: profile.id,
         });
         await newUser.save();
-        let token = jwt.sign({
-          twitterId: newUser.twitterId
-        }, serverConfig.SECRET);
-        console.log(`JWT ${token}`);
+        
+        
         return cb(null, newUser);
       }
     }
@@ -48,10 +43,7 @@ passport.use('jwt', new JwtStrategy(
     secretOrKey: serverConfig.SECRET,
   },
   async function(jwt_payload, cb) {
-    console.log("JWT CB");
-    console.log();
     user = await User.findOne({twitterId: jwt_payload.twitterId});
-    console.log(user);
     cb(null, user)
 }));
 
@@ -61,8 +53,10 @@ router
   .get(
     passport.authenticate("twitter", { failureRedirect: "/login" }),
     function (req, res) {
-      console.log(req.user);
-      return res.json({user: req.user});
+      let token = jwt.sign({
+        twitterId: req.user.twitterId
+      }, serverConfig.SECRET);
+      return res.json({user: req.user, token: `JWT ${token}`});
     }
   );
 
