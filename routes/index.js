@@ -1,8 +1,12 @@
-const express = require('express')
+const Router = require('express');
+const router = new Router();
+const pokemonRoutes = require('./pokemon.routes')
+const pokeartRoutes = require('./pokeart.routes')
+const userRoutes = require('./user.routes');
+const user = require('../models/user');
 
-
-
-const router = express.Router()
-router.get('/teste', (req, res) => res.send('Hello World!'))
+router.use('/', pokemonRoutes);
+router.use('/', pokeartRoutes);
+router.use('/auth', userRoutes);
 
 module.exports = router

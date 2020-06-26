@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const pokemonSchema = new Schema({
-  twitterHandle: { type: 'String', required: true},
+const userSchema = new Schema({
+  twitterId: { type: 'String', required: true, unique: true},
   
   //Posts
   postAmount: { type: "Number", default: 0, required: true },
@@ -16,4 +16,4 @@ const pokemonSchema = new Schema({
 });
 
 
-module.exports = mongoose.model('Pokemon', pokemonSchema);
+module.exports = mongoose.model('User', userSchema);
