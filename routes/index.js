@@ -7,6 +7,6 @@ const user = require('../models/user');
 
 router.use('/', pokemonRoutes);
 router.use('/', pokeartRoutes);
-router.use('/auth', userRoutes);
+router.use('/', userRoutes);
 
 module.exports = router

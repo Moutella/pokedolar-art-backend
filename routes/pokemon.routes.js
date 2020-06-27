@@ -7,6 +7,6 @@ const passport = require('passport')
 router.route('/pokemon').get(PokemonController.getPokemons);
 router.route('/pokemon/:pokeid').get(PokemonController.getPokemon);
 router.route('/pokemon').post(passport.authenticate('jwt', {session:false}), PokemonController.addPokemon);
-router.route('/pokemon/:pokeid').delete(PokemonController.deletePokemon);
+router.route('/pokemon/:pokeid').delete(passport.authenticate('jwt', {session:false}), PokemonController.deletePokemon);
 
 module.exports = router

@@ -1,14 +1,14 @@
 const serverConfig = require("../config");
 const Router = require("express");
 const router = new Router();
-
+const userController = require("../controllers/user.controller");
 const passport = require("passport");
 const TwitterStrategy = require("passport-twitter").Strategy;
 const JwtStrategy = require('passport-jwt').Strategy, ExtractJwt = require('passport-jwt').ExtractJwt;
 const jwt = require('jsonwebtoken')
 const User = require('../models/user');
 
-
+//Authentication and Registering
 passport.use('twitter',
   new TwitterStrategy(
     {
@@ -17,17 +17,19 @@ passport.use('twitter',
       callbackURL: "/auth/twitter/callback", //will have to change to app url later
     },
     async function (token, tokenSecret, profile, cb) {
-
       let user = await User.findOne({twitterId:profile.id});
-      
       if (user){
         
         return cb(null,user);
         
       }
       else{
-        const newUser = new User({
+        console.log(profile.name)
+        const newUser = await new User({
           twitterId: profile.id,
+          twitterDisplayName: profile.displayName,
+          twitterUsername: profile.username,
+          profileImageUrl: profile.photos[0].value.replace("_normal", "_200x200")
         });
         await newUser.save();
         
@@ -48,15 +50,15 @@ passport.use('jwt', new JwtStrategy(
     secretOrKey: serverConfig.SECRET,
   },
   async function(jwt_payload, cb) {
-    console.log("teste");
     console.log(jwt_payload);
+    console.log("JWTTOKEN HERE");
     user = await User.findOne({twitterId: jwt_payload.twitterId});
     cb(null, user)
 }));
 
-router.route("/twitter/login").get(passport.authenticate("twitter"));
+router.route("/auth/twitter/login").get(passport.authenticate("twitter"));
 router
-  .route("/twitter/callback")
+  .route("/auth/twitter/callback")
   .get(
     passport.authenticate("twitter", { failureRedirect: "/login" }),
     function (req, res) {
@@ -70,5 +72,14 @@ router
       return res.json({user: req.user, token: `JWT ${token}`});
     }
   );
+
+
+
+//Admin Utilities
+router.route("/user/admin").post(passport.authenticate('jwt'), userController.changeAdminStatus)
+
+//User view
+router.route("/user/:userId").get(userController.getUser)
+
 
 module.exports = router;

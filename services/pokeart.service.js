@@ -16,15 +16,14 @@ async function getRandomPokeArt() {
 
 async function addPokeArt(pokeart, pokeid, name, author) {
   let pokemon = await PokemonService.getPokemon(pokeid);
-
+  console.log(author)
   try {
     const newPokeArt = new PokeArt({
       name: name,
       pokemon: pokemon._id,
       filePath: `/${pokeart.uuid}/${pokeart.field}/${pokeart.filename}`,
-      author: author,
+      author: author._id,
     });
-
     let pokeArt = await newPokeArt.save();
     return pokeArt._id;
   } catch (e) {
@@ -35,7 +34,7 @@ async function addPokeArt(pokeart, pokeid, name, author) {
 
 async function getPokeArt(pokeArtId) {
   try {
-    return await PokeArt.findOne({ _id: pokeArtId });
+    return await PokeArt.findOne({ _id: pokeArtId }).populate('author', 'twitterId -_id');
   } catch (e) {
     throw new Error(`Could not find pokemon wth id ${pokeArtId}`);
   }
@@ -79,10 +78,16 @@ async function changeApprovalPokeArt(pokeArtId, approvalStatus) {
   }
 }
 
+async function getUserArts(author){
+  let approvedArts = await PokeArt.find({author: author._id, approved: true})
+  return approvedArts;
+}
+
 module.exports = {
   getRandomPokeArt,
   addPokeArt,
   getPokeArt,
   deletePokeArt,
   changeApprovalPokeArt,
+  getUserArts
 };

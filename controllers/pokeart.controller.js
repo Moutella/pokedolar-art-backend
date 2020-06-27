@@ -8,6 +8,7 @@ const fileUtils = require('../utils/fileUtils');
  * @returns void
  */
 async function getRandomPokeArt(req, res) {
+  console.log(req.user)
   try {
     let returnValue = await PokeArtService.getRandomPokeArt();
     return res.json(returnValue);
@@ -25,16 +26,15 @@ async function getRandomPokeArt(req, res) {
  */
 async function addPokeArt(req, res) {
   if (!req.body.artName || !req.body.pokeid || !req.files) {
-
     res.status(403).end();
   }
-  
+  console.log(req.user);
+  let author = req.user;
   let file = req.files.pokeart;
   let pokeId = req.body.pokeid;
   let name = req.body.artName;
   
   //add author later
-  let author = null;
   try {
     let pokeArtId = await PokeArtService.addPokeArt(file, pokeId, name, author);
     res.json({ success: pokeArtId });
@@ -83,6 +83,9 @@ async function deletePokeArt(req, res) {
     return res.status(403).json({ error: e });
   }
 }
+
+
+
 
 async function changeApprovalPokeArt(req, res) {
   if (!req.query.id) {
