@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const pokeArtSchema = new Schema({
   name: { type: "String", required: true },
   pokemon: { type: Schema.Types.ObjectId, ref: 'Pokemon' },
-  filePath: { type: 'String', required: true},
+  filePath: { type: 'String', required: true, unique: true},
   createdAt: { type: 'Date', default: Date.now, required: true},
   author: { type: Schema.Types.ObjectId, ref: 'User', required: false},
   

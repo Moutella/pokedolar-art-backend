@@ -12,6 +12,7 @@ const pokemonSchema = new Schema({
   lastTweet: { type: 'String', required: false},
 
   //Arts
+  officialPokeArts: [{ type: Schema.Types.ObjectId, ref: 'PokeArt' }],
   pokeArts: [{ type: Schema.Types.ObjectId, ref: 'PokeArt' }]
 });
 

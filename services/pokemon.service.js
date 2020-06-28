@@ -1,45 +1,47 @@
-const Pokemon = require('../models/pokemon');
+const Pokemon = require("../models/pokemon");
 
-async function getPokemons(){
-  try{
-    return Pokemon.find().populate('pokeArts').select(['id', 'name', 'pokeArts', 'postAmount']).sort('id')
+async function getPokemons() {
+  try {
+    return Pokemon.find()
+      .select(["id", "name", "pokeArts", "postAmount", 'officialPokeArts'])
+      .sort("id");
+  } catch (e) {
+    throw new Error("Could not get all pokemons, please try again later");
   }
-  catch (e){
-    throw new Error("Could not get all pokemons, please try again later")
-  }
-
 }
 
 async function addPokemon(pokemon) {
-  
   const newPokemon = new Pokemon(pokemon);
   try {
-    return await newPokemon.save()
-  }
-  catch (e){
-    throw new Error("Could not save this pokemon to the database")
+    return await newPokemon.save();
+  } catch (e) {
+    throw new Error("Could not save this pokemon to the database");
   }
 }
 
 async function getPokemon(pokeid) {
   try {
-    return Pokemon.findOne({ id: pokeid }).select(['id', 'name', 'pokeArts', 'postAmount'])
+    return await Pokemon.findOne({ id: pokeid })
+      .populate("pokeArts").populate("officialPokeArts", 'filePath creatorText')
+      .select([
+        "id",
+        "name",
+        "postAmount",
+        "pokeArts",
+        "officialPokeArts",
+      ]);
+  } catch (e) {
+    console.log(e);
+    throw new Error(`Could not find pokemon wth id ${pokeid}`);
   }
-  catch (e){
-    throw new Error(`Could not find pokemon wth id ${pokeid}`)
-  }
-  
-    
 }
 async function deletePokemon(pokeid) {
   try {
-    
     let pokemon = await Pokemon.findOne({ id: pokeid });
     let remove = await pokemon.remove();
-    return pokemon
-    }
-  catch (e) {
-    throw new Error(`Could not delete ${pokeid}`)
+    return pokemon;
+  } catch (e) {
+    throw new Error(`Could not delete ${pokeid}`);
   }
 }
 
@@ -47,5 +49,5 @@ module.exports = {
   getPokemons,
   addPokemon,
   getPokemon,
-  deletePokemon
-}
+  deletePokemon,
+};

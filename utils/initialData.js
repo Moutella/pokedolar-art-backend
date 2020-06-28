@@ -32,25 +32,3 @@ for(pokemon of pokedex){
       }
     }
 })();
-
-(async () => {
-  for(pokemon of pokedex){
-      try{
-        let pokemonObj = await Pokemon.findOne({id: pokemon.id});
-        if(!pokemonObj){
-          let newPokemon = new Pokemon({
-            id: pokemon.id,
-            name: pokemon.name.english,
-            type: pokemon.type
-          })
-          newPokemon.save()
-        }
-        else{
-          throw new Error(`Pokemon ${pokemon.id}: ${pokemon.name.english} already in the DB`)
-        }
-      }
-      catch (e){
-        console.log(e)
-      }
-    }
-})();
