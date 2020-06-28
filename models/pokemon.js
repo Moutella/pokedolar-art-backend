@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const pokemonSchema = new Schema({
-  name: { type: "String", requred: true, unique: true },
+  name: { type: "String", required: true, unique: true },
   id: { type: "Number", required: true, unique: true },
-  
+  type: [{type: "String"}],
   //Posts
   postAmount: { type: "Number", default: 0, required: true },
   firstPosted: { type: "Date", required: false },

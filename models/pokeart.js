@@ -7,6 +7,7 @@ const pokeArtSchema = new Schema({
   filePath: { type: 'String', required: true},
   createdAt: { type: 'Date', default: Date.now, required: true},
   author: { type: Schema.Types.ObjectId, ref: 'User', required: false},
+  
   //Posts
   postAmount: { type: "Number", required: true, default:0 },
   firstPosted: { type: "Date", required: false },
