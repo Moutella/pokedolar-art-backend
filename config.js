@@ -4,6 +4,8 @@ const config = {
   port: process.env.PORT || 5555,
   TWITTER_API_KEY: process.env.TWITTER_API_KEY,
   TWITTER_API_SECRET: process.env.TWITTER_API_SECRET,
-  SECRET: process.env.SECRET
+  SECRET: process.env.SECRET,
+  BOT_TWITTER_TOKEN: process.env.BOT_TWITTER_TOKEN,
+  BOT_TWITTER_SECRET: process.env.BOT_TWITTER_SECRET
 };
 module.exports = config

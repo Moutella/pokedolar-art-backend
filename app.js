@@ -8,6 +8,7 @@ const helmet = require('helmet')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const app = new Express();
+const twitterBot = require('./pokedolar_bot')
 
 bb.extend(app, {
   upload: true,
