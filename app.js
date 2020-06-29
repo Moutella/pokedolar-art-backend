@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const app = new Express();
 const twitterBot = require('./pokedolar_bot')
+const cron = require('node-cron')
 
 bb.extend(app, {
   upload: true,
@@ -39,3 +40,12 @@ app.use('/pokearts', Express.static(__dirname + '/pokearts'));
 
 mongoose.connect(serverConfig.mongoURL, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true});
 app.listen(serverConfig.port, () => console.log(`Example app listening at http://localhost:${serverConfig.port}`));
+
+
+
+// cron.schedule('35 9-17 * * 0-5', () => {
+//   twitterBot.checkChangeAndTweet();
+// })
+cron.schedule('* * * * *', () => {
+  twitterBot.checkChangeAndTweet();
+})

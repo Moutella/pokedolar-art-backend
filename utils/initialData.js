@@ -47,7 +47,7 @@ for(pokemon of pokedex){
       console.log(` Old dolar value: ${dynConfDolar.value}`);
     } else {
       let newDynconfDolar = new dynConfig({
-        key: "dolarValue",
+        key: "currentValue",
         value: dolarValue,
       });
       newDynconfDolar.save();
