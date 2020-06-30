@@ -46,6 +46,6 @@ app.listen(serverConfig.port, () => console.log(`Example app listening at http:/
 // cron.schedule('35 9-17 * * 0-5', () => {
 //   twitterBot.checkChangeAndTweet();
 // })
-cron.schedule('* * * * *', () => {
-  twitterBot.checkChangeAndTweet();
-})
+// cron.schedule('* * * * *', () => {
+//   twitterBot.checkChangeAndTweet();
+// })

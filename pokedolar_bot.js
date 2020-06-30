@@ -1,6 +1,6 @@
 const twit = require("twit");
 const dynConfig = require("./models/dynconfig");
-const fs = require('fs')
+const fs = require("fs");
 const config = require("./config");
 const axios = require("axios");
 const emojis = require("./utils/emojis");
@@ -23,11 +23,8 @@ async function checkChangeAndTweet() {
 
   let currentValue = parseFloat(
     request.data[request.data.length - 1].ask
-  ).toFixed(2);
-  
-  currentValue-=2.98;
-  currentValue = currentValue.toFixed(2)
-  
+  )
+
   let valueChanged = false;
   try {
     let dynConfDolar = await dynConfig.findOne({ key: "currentValue" });
@@ -57,7 +54,8 @@ async function checkChangeAndTweet() {
   if (valueChanged) {
     let changeString = "";
     let emoji = "";
-    let pokemonId = parseInt(currentValue * 100);
+    let pokemonCount = await Pokemon.find().count()
+    let pokemonId = parseInt(currentValue * 100) % pokemonCount;
     let pokemon = await Pokemon.findOne({ id: pokemonId })
       .populate("pokeArts")
       .populate("officialPokeArts");
@@ -71,55 +69,46 @@ async function checkChangeAndTweet() {
       changeString = "subiu";
       emoji = emojis.sad_emoji();
     }
-    
+
     let authorText = "";
     if (pokeArt.isOfficial) {
       authorText = `Arte oficial por ${pokeArt.creatorText}`;
     } else {
       let twitterHandle = pokeArt.author;
-      authorText = `Arte por ${twitterHandle}`;
+      authorText = `Arte de @${twitterHandle}`;
     }
-    let textValue = `R$ ${currentValue}`.replace(".", ",")
-    let tweetString = `TWEET DE TESTE\nDólar ${changeString} para ${textValue} ${emoji}\n\n\n#${pokemonId} - ${pokemon.name}\n${authorText}`;
-    
-    const b64content = fs.readFileSync(pokeArt.filePath, {
-      encoding: "base64",
-    });
-    
-    // first we must post the media to Twitter
-    bot_twitter.post("media/upload", { media_data: b64content }, function (
-      err,
-      data,
-      response
-    ) {
-      // now we can assign alt text to the media, for use by screen readers and
-      // other text-based presentations and interpreters
-      
-      const mediaIdStr = data.media_id_string;
-      const altText = `${pokemon.name}`;
-      let meta_params = { media_id: mediaIdStr, alt_text: { text: altText } };
+    let textValue = `R$ ${currentValue}`.replace(".", ",");
+    let tweetString = `TWEET DE TESTE\nO dólar ${changeString} para ${textValue} ${emoji}\n\n\n#${pokemonId} - ${pokemon.name}\n${authorText}`;
 
-      bot_twitter.post("media/metadata/create", meta_params, function (
-        err,
-        data,
-        response
-      ) {
-        if (!err) {
-          // now we can reference the media and post a tweet (media will attach to the tweet)
-          var params = {
-            status: tweetString,
-            media_ids: [mediaIdStr],
-          };
-
-          bot_twitter.post("statuses/update", params, function (err, data, response) {
-            console.log('Twittou');
-            console.log(tweetString);
-          });
-        }
+    try {
+      const b64content = fs.readFileSync(pokeArt.filePath, {
+        encoding: "base64",
       });
-    });
+
+      bot_twitter.post("media/upload", {
+        media_data: b64content,
+      }, async function(err, data, response){
+        
+        const mediaIdStr = data.media_id_string;
+        
+        const altText = `${pokemon.name}`;
+        let meta_params = { media_id: mediaIdStr, alt_text: { text: altText } };
+        await bot_twitter.post("media/metadata/create", meta_params);
+        let params = {
+          status: tweetString,
+          media_ids: [mediaIdStr],
+        };
+
+        await bot_twitter.post("statuses/update", params);        
+        console.log("Twittou");
+        console.log(tweetString);
+        });
+      
+    } catch (e) {
+      console.log(e);
+    }
   } else {
-    console.log("Não mudou :(")
+    console.log("Não mudou :(");
   }
 }
 (async () => {
