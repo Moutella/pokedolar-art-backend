@@ -55,7 +55,8 @@ async function getPokeArt(req, res) {
   try {
     let artid = req.params.artid
     let pokeart = await PokeArtService.getPokeArt(artid);
-    return res.json({pokeart: pokeart})
+    console.log(pokeart);
+    return res.json(pokeart)
   }
   catch (e) {
     res.status(403).json({ error: e });

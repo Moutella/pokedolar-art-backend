@@ -53,17 +53,14 @@ passport.use('jwt', new JwtStrategy(
     cb(null, user)
 }));
 
-router.route("/login").get(passport.authenticate("twitter"));
+router.route("/login").get(passport.authenticate("twitter", {session: false}));
 router
   .route("/twitter/callback")
   .get(
-    passport.authenticate("twitter", { failureRedirect: "/login" }),
-    function (req, res) {
-      let token = jwt.sign({
-        twitterId: req.user.twitterId
-      }, serverConfig.SECRET);
-      return res.redirect(`${serverConfig.SPA_URL}login/callback?token=${token}`);
-    }
+    passport.authenticate("twitter", {
+      successRedirect: serverConfig.SPA_URL+"user",
+      failureRedirect: "/auth/login/failed"
+    })
   );
 
 
@@ -73,6 +70,7 @@ router.route("/user/admin").post(passport.authenticate('jwt'), userController.ch
 
 //User view
 router.route("/user/:userId").get(userController.getUser)
+router.route("/user").get(userController.currentUser)
 
 
 module.exports = router;

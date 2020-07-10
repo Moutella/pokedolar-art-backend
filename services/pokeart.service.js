@@ -32,7 +32,7 @@ async function addPokeArt(pokeart, pokeid, name, author) {
 
 async function getPokeArt(pokeArtId) {
   try {
-    return await PokeArt.findOne({ _id: pokeArtId }).populate('author', 'twitterId -_id');
+    return await PokeArt.findOne({ _id: pokeArtId }).populate('author', 'twitterId -_id').populate('pokemon');
   } catch (e) {
     throw new Error(`Could not find pokemon wth id ${pokeArtId}`);
   }

@@ -17,6 +17,12 @@ async function getUser(req, res){
   }
 }
 
+async function currentUser(req, res){
+  console.log(req.user)
+  
+  res.send(req.user);
+}
+
 /**
  * Get all pokemons
  * @param req
@@ -39,5 +45,6 @@ async function changeAdminStatus(req, res) {
 
 module.exports = {
   changeAdminStatus,
-  getUser
+  getUser,
+  currentUser
 };

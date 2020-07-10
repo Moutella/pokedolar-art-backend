@@ -23,7 +23,8 @@ async function checkChangeAndTweet() {
 
   let currentValue = parseFloat(
     request.data[request.data.length - 1].ask
-  )
+  ).toFixed(2)
+  console.log(currentValue);
 
   let valueChanged = false;
   try {
