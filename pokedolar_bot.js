@@ -111,9 +111,6 @@ async function checkChangeAndTweet() {
     console.log("Não mudou :(");
   }
 }
-(async () => {
-  checkChangeAndTweet()
-})();
 
 module.exports = {
   checkChangeAndTweet,

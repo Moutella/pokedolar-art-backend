@@ -14,11 +14,9 @@ passport.use('twitter',
     {
       consumerKey: serverConfig.TWITTER_API_KEY,
       consumerSecret: serverConfig.TWITTER_API_SECRET,
-      callbackURL: "/auth/twitter/callback", //will have to change to app url later
+      callbackURL: "/twitter/callback", //will have to change to app url later
     },
     async function (token, tokenSecret, profile, cb) {
-      console.log(token, tokenSecret);
-      console.log(profile);
       let user = await User.findOne({twitterId:profile.id});
       if (user){
         
@@ -26,7 +24,6 @@ passport.use('twitter',
         
       }
       else{
-        console.log(profile.name)
         const newUser = await new User({
           twitterId: profile.id,
           twitterDisplayName: profile.displayName,
@@ -52,26 +49,20 @@ passport.use('jwt', new JwtStrategy(
     secretOrKey: serverConfig.SECRET,
   },
   async function(jwt_payload, cb) {
-    console.log(jwt_payload);
-    console.log("JWTTOKEN HERE");
     user = await User.findOne({twitterId: jwt_payload.twitterId});
     cb(null, user)
 }));
 
-router.route("/auth/twitter/login").get(passport.authenticate("twitter"));
+router.route("/login").get(passport.authenticate("twitter"));
 router
-  .route("/auth/twitter/callback")
+  .route("/twitter/callback")
   .get(
     passport.authenticate("twitter", { failureRedirect: "/login" }),
     function (req, res) {
       let token = jwt.sign({
         twitterId: req.user.twitterId
       }, serverConfig.SECRET);
-      res.cookie('JWT', token, {
-        maxAge: new Date(Date.now() + 9999999),
-        httpOnly: true
-      })
-      return res.json({user: req.user, token: `JWT ${token}`});
+      return res.redirect(`${serverConfig.SPA_URL}login/callback?token=${token}`);
     }
   );
 

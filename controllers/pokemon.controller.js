@@ -8,7 +8,6 @@ const PokemonService = require("../services/pokemon.service");
  * @returns void
  */
 async function getPokemons(req, res) {
-  console.log(req.user);
   try {
     returnValue = await PokemonService.getPokemons();
     res.json(returnValue);
@@ -57,7 +56,6 @@ async function getPokemon(req, res) {
     return res.json({pokemon: pokemon})
   }
   catch (e) {
-    console.log(e);
     res.status(403).json({ error: e });
   }
 }

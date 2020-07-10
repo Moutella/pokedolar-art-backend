@@ -8,7 +8,6 @@ const fileUtils = require('../utils/fileUtils');
  * @returns void
  */
 async function getRandomPokeArt(req, res) {
-  console.log(req.user)
   try {
     let returnValue = await PokeArtService.getRandomPokeArt();
     return res.json(returnValue);
@@ -28,7 +27,6 @@ async function addPokeArt(req, res) {
   if (!req.body.artName || !req.body.pokeid || !req.files) {
     res.status(403).end();
   }
-  console.log(req.user);
   let author = req.user;
   let file = req.files.pokeart;
   let pokeId = req.body.pokeid;

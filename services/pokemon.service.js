@@ -31,7 +31,6 @@ async function getPokemon(pokeid) {
         "officialPokeArts",
       ]);
   } catch (e) {
-    console.log(e);
     throw new Error(`Could not find pokemon wth id ${pokeid}`);
   }
 }

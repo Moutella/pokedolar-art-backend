@@ -3,10 +3,8 @@ const pokeartService = require('../services/pokeart.service');
 
 
 async function getUser(req, res){
-  console.log(req.params.userId)
   let userId = req.params.userId
   let user = await UserService.getUser(userId)
-  console.log(user);
   let arts = await pokeartService.getUserArts(user)
   if(user){
     res.send({

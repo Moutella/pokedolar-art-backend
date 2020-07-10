@@ -73,7 +73,6 @@ const Pokemon = pokeart.model("Pokemon", pokemonSchema);
 
   for (pokemonImg of pokemonImgs) {
     let filename = pokemonImg.filePath.split("/")[1];
-    console.log(filename);
     try {
       let pokemon = await Pokemon.findOne({ id: pokemonImg.nationalPokedexNumber });
       fs.copyFileSync(

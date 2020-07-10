@@ -68,7 +68,6 @@ const Pokemon = pokeart.model("Pokemon", pokemonSchema);
 
   for (pokemonImg of pokemonImgs) {
     let filename = pokemonImg.filePath.split("/")[1];
-    console.log(filename);
     try {
       let pokemon = await Pokemon.findOne({ id: pokemonImg.id });
       fs.copyFileSync(
@@ -94,7 +93,6 @@ const Pokemon = pokeart.model("Pokemon", pokemonSchema);
       console.log(`Deu ruim ${pokemon.id}`);
     }
   }
-  console.log("Acabou");
 })().catch((e) => {
   console.log(e);
 });

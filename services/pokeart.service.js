@@ -16,7 +16,6 @@ async function getRandomPokeArt() {
 
 async function addPokeArt(pokeart, pokeid, name, author) {
   let pokemon = await PokemonService.getPokemon(pokeid);
-  console.log(author)
   try {
     const newPokeArt = new PokeArt({
       name: name,
@@ -27,7 +26,6 @@ async function addPokeArt(pokeart, pokeid, name, author) {
     let pokeArt = await newPokeArt.save();
     return pokeArt._id;
   } catch (e) {
-    console.log(e);
     throw new Error("Could not save this pokemon to the database");
   }
 }
@@ -51,7 +49,6 @@ async function deletePokeArt(pokeArtId) {
     
     return pokeart;
   } catch (e) {
-    console.log(e);
     throw new Error(`Could not delete ${pokeid}`);
   }
 }
@@ -73,7 +70,6 @@ async function changeApprovalPokeArt(pokeArtId, approvalStatus) {
     await Promise.all([approvedPokeArt.save(), pokemon.save()]);
     return true;
   } catch (e) {
-    console.log(e);
     throw new Error("Could not approve PokeArt");
   }
 }

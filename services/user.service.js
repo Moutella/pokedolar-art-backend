@@ -7,7 +7,6 @@ async function getUser(userId){
     return user;
   }
   catch (e){
-    console.log(e);
     return false;
   }
 }
