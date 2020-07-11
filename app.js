@@ -57,6 +57,7 @@ passport.deserializeUser(function (obj, cb) {
 });
 
 app.get("/status", (req, res) => res.json({ status: "Working" }));
+
 app.use(function (req, res, next) {
   console.log(req.url, req.method);
   next();

@@ -20,12 +20,13 @@ async function addPokeArt(pokeart, pokeid, name, author) {
     const newPokeArt = new PokeArt({
       name: name,
       pokemon: pokemon._id,
-      filePath: `/${pokeart.uuid}/${pokeart.field}/${pokeart.filename}`,
+      filePath: `pokearts/${pokeart.uuid}/${pokeart.field}/${pokeart.filename}`,
       author: author._id,
     });
     let pokeArt = await newPokeArt.save();
-    return pokeArt._id;
+    return pokeArt;
   } catch (e) {
+    console.log(e);
     throw new Error("Could not save this pokemon to the database");
   }
 }
@@ -79,11 +80,17 @@ async function getUserArts(author){
   return approvedArts;
 }
 
+async function getPendingArts(){
+  let pendingArts = await PokeArt.find({reviewed: false}).populate("author")
+  return pendingArts;
+}
+
 module.exports = {
   getRandomPokeArt,
   addPokeArt,
   getPokeArt,
   deletePokeArt,
   changeApprovalPokeArt,
-  getUserArts
+  getUserArts,
+  getPendingArts
 };

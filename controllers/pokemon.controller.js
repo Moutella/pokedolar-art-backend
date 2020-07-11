@@ -23,6 +23,9 @@ async function getPokemons(req, res) {
  * @returns void
  */
 async function addPokemon(req, res) {
+  if (!req.user.admin){
+    res.status(403)
+  }
   if (!req.body.name || !req.body.id) {
     res.status(403).end();
   }

@@ -20,7 +20,7 @@ passport.use('twitter',
       console.log(profile);
       let user = await User.findOne({twitterId:profile.id});
       if (user){
-        user.twitterDisplayName = profile.twitterDisplayName
+        user.twitterDisplayName = profile.displayName
         user.twitterUsername = profile.username
         user.profileImageUrl = profile.photos[0].value.replace("_normal", "_200x200")
         user.save()
@@ -28,7 +28,7 @@ passport.use('twitter',
         
       }
       else{
-        const newUser = await new User({
+        const newUser = new User({
           twitterId: profile.id,
           twitterDisplayName: profile.displayName,
           twitterUsername: profile.username,

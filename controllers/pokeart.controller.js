@@ -24,21 +24,27 @@ async function getRandomPokeArt(req, res) {
  * @returns void
  */
 async function addPokeArt(req, res) {
-  if (!req.body.artName || !req.body.pokeid || !req.files) {
+  if (!req.body.artName || !req.body.pokemon || !req.files) {
     res.status(403).end();
   }
+  console.log(req.body);
+  console.log(req.files);
+  console.log(req.user);
   let author = req.user;
-  let file = req.files.pokeart;
-  let pokeId = req.body.pokeid;
+  let file = req.files.image;
+  let pokeId = req.body.pokemon;
   let name = req.body.artName;
+  
   
   //add author later
   try {
-    let pokeArtId = await PokeArtService.addPokeArt(file, pokeId, name, author);
-    res.json({ success: pokeArtId });
+    let pokeArt = await PokeArtService.addPokeArt(file, pokeId, name, author);
+    res.json(pokeArt);
   } catch (e) {
-    fileUtils.removeFile(file.file);
+    console.log(e);
+    
     res.status(403).json({ error: e });
+    fileUtils.removeFile(file.file);
   }
 }
 
@@ -107,10 +113,26 @@ async function changeApprovalPokeArt(req, res) {
   }
 }
 
+async function getPendingArts(req, res){
+  if (!req.user || !req.user.admin){
+    return res.status(403).end()
+  }
+
+  try{
+    pendingArts = await PokeArtService.getPendingArts();
+    console.log(pendingArts)
+    return res.json(pendingArts)
+  }
+  catch(e){
+    res.status(500).end();
+  }
+}
+
 module.exports = {
   getRandomPokeArt,
   getPokeArt,
   addPokeArt,
   deletePokeArt,
-  changeApprovalPokeArt
+  changeApprovalPokeArt,
+  getPendingArts
 };
