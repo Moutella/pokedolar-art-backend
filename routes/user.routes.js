@@ -17,9 +17,13 @@ passport.use('twitter',
       callbackURL: "/twitter/callback", //will have to change to app url later
     },
     async function (token, tokenSecret, profile, cb) {
+      console.log(profile);
       let user = await User.findOne({twitterId:profile.id});
       if (user){
-        
+        user.twitterDisplayName = profile.twitterDisplayName
+        user.twitterUsername = profile.username
+        user.profileImageUrl = profile.photos[0].value.replace("_normal", "_200x200")
+        user.save()
         return cb(null,user);
         
       }
@@ -68,7 +72,7 @@ router
 //Admin Utilities
 router.route("/user/admin").post(passport.authenticate('jwt'), userController.changeAdminStatus)
 
-//User view
+//User views
 router.route("/user/:userId").get(userController.getUser)
 router.route("/user").get(userController.currentUser)
 
