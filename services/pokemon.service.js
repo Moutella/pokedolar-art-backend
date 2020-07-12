@@ -34,6 +34,7 @@ async function getPokemon(pokeid) {
     throw new Error(`Could not find pokemon wth id ${pokeid}`);
   }
 }
+
 async function deletePokemon(pokeid) {
   try {
     let pokemon = await Pokemon.findOne({ id: pokeid });

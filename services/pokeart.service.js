@@ -1,6 +1,8 @@
 const PokeArt = require("../models/pokeart");
 const PokemonService = require("../services/pokemon.service");
 const Pokemon = require("../models/pokemon");
+const fileUtils = require("../utils/fileUtils");
+
 
 async function getRandomPokeArt() {
   try {
@@ -20,9 +22,12 @@ async function addPokeArt(pokeart, pokeid, name, author) {
     const newPokeArt = new PokeArt({
       name: name,
       pokemon: pokemon._id,
-      filePath: `pokearts/${pokeart.uuid}/${pokeart.field}/${pokeart.filename}`,
+      filePath: `pokearts/fanarts/${pokeart.uuid}${pokeart.field}${pokemon._id}.png`,
       author: author._id,
     });
+      fileUtils.renameFile(pokeart.file, `pokearts/fanarts/${pokeart.uuid}${pokeart.field}${pokemon._id}.png`)
+      fileUtils.removeFolder(`pokearts/${pokeart.uuid}`)
+    
     let pokeArt = await newPokeArt.save();
     return pokeArt;
   } catch (e) {
@@ -33,7 +38,7 @@ async function addPokeArt(pokeart, pokeid, name, author) {
 
 async function getPokeArt(pokeArtId) {
   try {
-    return await PokeArt.findOne({ _id: pokeArtId }).populate('author', 'twitterId -_id').populate('pokemon');
+    return await PokeArt.findOne({ _id: pokeArtId }).populate('author').populate('pokemon');
   } catch (e) {
     throw new Error(`Could not find pokemon wth id ${pokeArtId}`);
   }
@@ -81,7 +86,7 @@ async function getUserArts(author){
 }
 
 async function getPendingArts(){
-  let pendingArts = await PokeArt.find({reviewed: false}).populate("author")
+  let pendingArts = await PokeArt.find({reviewed: false}).populate("author").populate('pokemon')
   return pendingArts;
 }
 

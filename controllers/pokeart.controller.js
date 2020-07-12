@@ -96,9 +96,9 @@ async function changeApprovalPokeArt(req, res) {
   if (!req.query.id) {
     return res.status(403).end();
   }
-  
   let pokeArtId = req.query.id;
   let status = req.query.status;
+  console.log(status);
   
   try {
     await PokeArtService.changeApprovalPokeArt(pokeArtId, status);

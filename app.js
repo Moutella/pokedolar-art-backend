@@ -1,5 +1,4 @@
-const cron = require("node-cron");
-
+const CronJob = require("cron").CronJob;
 const Express = require("express");
 const passport = require("passport");
 const cookieParser = require("cookie-parser");
@@ -7,12 +6,12 @@ const cookieSession = require("cookie-session");
 const cors = require("cors");
 const helmet = require("helmet");
 const bb = require("express-busboy");
-
 const mongoose = require("mongoose");
 
+const TwitterBotService = require('./services/twitter-bot.service');
+const PokeDolarService =  require('./services/pokedolar.service')
 const serverConfig = require("./config");
 const routes = require("./routes");
-const twitterBot = require("./pokedolar_bot");
 
 const app = new Express();
 
@@ -71,9 +70,11 @@ app.listen(serverConfig.port, () =>
   console.log(`Example app listening at http://localhost:${serverConfig.port}`)
 );
 
-cron.schedule("45 9-17 * * 0-5", () => {
-  twitterBot.checkChangeAndTweet();
-});
-// cron.schedule('* * * * *', () => {
-//   twitterBot.checkChangeAndTweet();
-// })
+let dollarJob = new CronJob("* 9-17 * * 0-5", async () => {
+  console.log("Update current dollar")
+  await PokeDolarService.updateCurrentDollar();
+  currentMinute = new Date().getMinutes();
+  if (currentMinute == 45){
+    TwitterBotService.checkChangeAndTweet();
+  }
+}, null, true, 'America/Sao_Paulo', null, true);
