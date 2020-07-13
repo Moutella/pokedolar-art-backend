@@ -57,7 +57,6 @@ async function checkChangeAndTweet() {
     }
     let textValue = `R$ ${currentDollar}`.replace(".", ",");
     let tweetString =
-      `TWEET DE TESTE\n` +
       `O dólar ${changeString} para ${textValue} ${emoji}` +
       `\n\n\n#${pokemonId} - ${pokemon.name}` +
       `\n${authorText}`;

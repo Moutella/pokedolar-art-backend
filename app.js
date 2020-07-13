@@ -1,4 +1,6 @@
 const CronJob = require("cron").CronJob;
+const https = require('https');
+const fs = require('fs');
 const Express = require("express");
 const passport = require("passport");
 const cookieParser = require("cookie-parser");
@@ -14,6 +16,11 @@ const serverConfig = require("./config");
 const routes = require("./routes");
 
 const app = new Express();
+
+var privateKey  = fs.readFileSync(__dirname + '/cert/server.key', 'utf8');
+var certificate = fs.readFileSync(__dirname + '/cert/server.crt', 'utf8');
+
+var credentials = {key: privateKey, cert: certificate};
 
 app.use(helmet());
 mongoose.connect(serverConfig.mongoURL, {
@@ -39,7 +46,7 @@ app.use(passport.session());
 
 app.use(
   cors({
-    origin: "http://192.168.15.57:5556", // allow to server to accept request from different origin
+    origin: "https://pokedolar.art", // allow to server to accept request from different origin
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true, // allow session cookie from browser to pass through
   })
@@ -66,7 +73,9 @@ app.use("/", routes);
 app.use("/static", Express.static(__dirname + "/public"));
 app.use("/pokearts", Express.static(__dirname + "/pokearts"));
 
-app.listen(serverConfig.port, () =>
+let httpsServer = https.createServer(credentials, app);
+
+httpsServer.listen(serverConfig.port, () =>
   console.log(`Example app listening at http://localhost:${serverConfig.port}`)
 );
 
@@ -74,7 +83,9 @@ let dollarJob = new CronJob("* 9-17 * * 1-5", async () => {
   console.log("Update current dollar")
   await PokeDolarService.updateCurrentDollar();
   currentMinute = new Date().getMinutes();
-  if (currentMinute == 45){
+  console.log(currentMinute);
+  if (currentMinute == 5 || currentMinute == 35){
+    console.log("twittou"); 
     TwitterBotService.checkChangeAndTweet();
   }
-}, null, true, 'America/Sao_Paulo', null);
+}, null, true, 'America/Sao_Paulo', null, true);
