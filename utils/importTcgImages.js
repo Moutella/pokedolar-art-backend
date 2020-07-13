@@ -69,9 +69,11 @@ const PokemonImg = pokemonarts.model("PokeTCG", TcgImageSchema);
 const PokeArt = pokeart.model("PokeArt", pokeArtSchema);
 const Pokemon = pokeart.model("Pokemon", pokemonSchema);
 (async () => {
+  console.log("Started");
   let pokemonImgs = await PokemonImg.find({ cropped: true });
 
   for (pokemonImg of pokemonImgs) {
+    console.log(pokemonImg.id);
     let filename = pokemonImg.filePath.split("/")[1];
     try {
       let pokemon = await Pokemon.findOne({ id: pokemonImg.nationalPokedexNumber });

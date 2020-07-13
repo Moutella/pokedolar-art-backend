@@ -64,6 +64,7 @@ const PokemonImg = pokemonarts.model("PokeDex", PokedexImgSchema);
 const PokeArt = pokeart.model("PokeArt", pokeArtSchema);
 const Pokemon = pokeart.model("Pokemon", pokemonSchema);
 (async () => {
+  console.log("started");
   let pokemonImgs = await PokemonImg.find();
 
   for (pokemonImg of pokemonImgs) {
