@@ -46,7 +46,6 @@ async function updateCurrentDollar() {
     }
     return currentValue;
   } catch (e) {
-    console.log(e);
     throw new Error("Could not update current dollar value");
   }
 }
@@ -70,7 +69,6 @@ async function getLastTweetDollar() {
 
 async function updateLastTweetDollar(newValue) {
   try {
-    let dynConfDolar = await DynConfig.findOne({ key: "currentValue" });
     let dynConfLastTweetDolar = await DynConfig.findOne({
       key: "lastTweetValue",
     });

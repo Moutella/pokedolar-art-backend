@@ -17,7 +17,6 @@ passport.use('twitter',
       callbackURL: "/twitter/callback", //will have to change to app url later
     },
     async function (token, tokenSecret, profile, cb) {
-      console.log(profile);
       let user = await User.findOne({twitterId:profile.id});
       if (user){
         user.twitterDisplayName = profile.displayName

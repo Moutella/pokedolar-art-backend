@@ -19,8 +19,6 @@ const bot_twitter = new twit({
 async function checkChangeAndTweet() {
   let currentDollar = await PokeDolarService.getCurrentDollar();
   let lastTweet = await PokeDolarService.getLastTweetDollar();
-  console.log(currentDollar);
-  console.log(lastTweet);
   let valueChanged = 0;
   let changeString = "";
   let emoji = "";
@@ -36,7 +34,6 @@ async function checkChangeAndTweet() {
     }
     PokeDolarService.updateLastTweetDollar(currentDollar);
   }
-  console.log(valueChanged);
 
   
   if (valueChanged) {
@@ -55,9 +52,8 @@ async function checkChangeAndTweet() {
     } else {
       let twitterId = pokeart.author.twitterId;
       let userData = await bot_twitter.get('users/show', {user_id: twitterId})
-      let twitterUser = (userData.data.screen_name);
-      bot_twitter.get('users/show', {user_id: twitterId})
-      authorText = `Arte de @${twitterHandle}`;
+      let twitterUser = userData.data.screen_name;
+      authorText = `Arte de @${twitterUser}`;
     }
     let textValue = `R$ ${currentDollar}`.replace(".", ",");
     let tweetString =

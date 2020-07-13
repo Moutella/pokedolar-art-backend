@@ -70,11 +70,11 @@ app.listen(serverConfig.port, () =>
   console.log(`Example app listening at http://localhost:${serverConfig.port}`)
 );
 
-let dollarJob = new CronJob("* 9-17 * * 0-5", async () => {
+let dollarJob = new CronJob("* 9-17 * * 1-5", async () => {
   console.log("Update current dollar")
   await PokeDolarService.updateCurrentDollar();
   currentMinute = new Date().getMinutes();
   if (currentMinute == 45){
     TwitterBotService.checkChangeAndTweet();
   }
-}, null, true, 'America/Sao_Paulo', null, true);
+}, null, true, 'America/Sao_Paulo', null);

@@ -16,7 +16,6 @@ async function getUser(req, res) {
 }
 
 async function currentUser(req, res) {
-  console.log(req.user);
   if (req.user) {
     res.send(req.user);
   }

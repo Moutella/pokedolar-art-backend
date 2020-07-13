@@ -31,7 +31,6 @@ async function addPokeArt(pokeart, pokeid, name, author) {
     let pokeArt = await newPokeArt.save();
     return pokeArt;
   } catch (e) {
-    console.log(e);
     throw new Error("Could not save this pokemon to the database");
   }
 }
