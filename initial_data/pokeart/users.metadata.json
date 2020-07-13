@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"pokeart.users"},{"v":{"$numberInt":"2"},"unique":true,"key":{"twitterId":{"$numberInt":"1"}},"name":"twitterId_1","ns":"pokeart.users","background":true}],"uuid":"91b653b5a748400b9bf3e466b0ce98da"}

@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"pokeart.pokearts"},{"v":{"$numberInt":"2"},"unique":true,"key":{"filePath":{"$numberInt":"1"}},"name":"filePath_1","ns":"pokeart.pokearts","background":true}],"uuid":"3e2fb5a628b3435c8053db14f139c9d6"}

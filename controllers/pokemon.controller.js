@@ -56,8 +56,8 @@ async function getPokemon(req, res) {
   try {
     let pokeid = req.params.pokeid
     let pokemon = await PokemonService.getPokemon(pokeid);
-
-    return res.json(pokemon)
+    console.log(pokemon);
+    return res.json(pokemon);
   }
   catch (e) {
     res.status(403).json({ error: e });
