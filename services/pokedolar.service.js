@@ -32,17 +32,17 @@ async function updateCurrentDollar() {
       oldValue = parseFloat(dynConfDolar.value);
       if (currentValue > oldValue) {
         dynConfDolar.value = currentValue;
-        dynConfDolar.save();
+        await dynConfDolar.save();
       } else if (currentValue < oldValue) {
         dynConfDolar.value = currentValue;
-        dynConfDolar.save();
+        await dynConfDolar.save();
       }
     } else {
       let newDynconfDolar = new DynConfig({
         key: "currentValue",
         value: currentValue,
       });
-      newDynconfDolar.save();
+      await newDynconfDolar.save();
     }
     return currentValue;
   } catch (e) {
