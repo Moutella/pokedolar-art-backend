@@ -19,11 +19,11 @@ async function updateCurrentDollar() {
   let request = await axios({
     method: "get",
     url:
-      "http://cotacoes.economia.uol.com.br/cambioJSONChart.html?type=d&cod=BRL&mt=off",
+      "https://api.cotacoes.uol.com/currency/intraday/list/?format=JSON&fields=bidvalue,askvalue,maxbid,minbid,variationbid,variationpercentbid,openbidvalue,date&currency=1&",
   });
 
   let currentValue = parseFloat(
-    request.data[request.data.length - 1].ask
+    request.data.docs[0].askvalue
   ).toFixed(2);
 
   try {
