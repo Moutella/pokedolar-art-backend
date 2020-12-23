@@ -22,6 +22,7 @@ async function checkChangeAndTweet() {
   let valueChanged = 0;
   let changeString = "";
   let emoji = "";
+  console.log(lastTweet != currentDollar);
   if (lastTweet != currentDollar) {
     if (currentDollar > lastTweet) {
       valueChanged = 1;
@@ -35,10 +36,14 @@ async function checkChangeAndTweet() {
     PokeDolarService.updateLastTweetDollar(currentDollar);
   }
 
-  
+  // console.log(currentDollar*100);
+  let dollarString = `${currentDollar}`.replace(".", '');
+  // console.log(`Dólar String: ${dollarString}`)
+  let dollarInt = parseInt(dollarString)
+  // console.log(`Dólar Int: ${dollarInt}`)
   if (valueChanged) {
     let pokemonCount = await Pokemon.find().count();
-    let pokemonId = parseInt(currentDollar * 100) % pokemonCount;
+    let pokemonId = dollarInt % pokemonCount
     let pokemon = await Pokemon.findOne({ id: pokemonId })
       .populate({ path: 'pokeArts', populate: {path: 'author'}})
       .populate("officialPokeArts");

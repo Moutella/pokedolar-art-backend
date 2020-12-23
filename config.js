@@ -9,6 +9,7 @@ const config = {
   BOT_TWITTER_CONSUMER_SECRET: process.env.BOT_TWITTER_CONSUMER_SECRET,
   BOT_TWITTER_TOKEN: process.env.BOT_TWITTER_TOKEN,
   BOT_TWITTER_SECRET: process.env.BOT_TWITTER_SECRET,
-  SPA_URL: process.env.SPA_URL
+  SPA_URL: process.env.SPA_URL,
+  ENV: process.env.ENVIRONMENT || 'DEV'
 };
 module.exports = config
