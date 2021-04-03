@@ -3,6 +3,7 @@ const PokeArt = require("../models/pokeart");
 const PokemonService = require("../services/pokemon.service");
 const Pokemon = require("../models/pokemon");
 const fileUtils = require("../utils/fileUtils");
+const AWSUtils = require('../utils/awsUtils')
 
 async function getRandomPokeArt() {
   try {
@@ -19,14 +20,14 @@ async function getRandomPokeArt() {
 async function addPokeArt(pokeart, pokeid, name, author) {
   let pokemon = await PokemonService.getPokemon(pokeid);
   try {
+    let awsUtils = new AWSUtils()
+    awsUtils.putFile(pokeart.file, `pokearts/fanarts/${pokeart.uuid}${pokeart.field}${pokemon._id}.png`)
     const newPokeArt = new PokeArt({
       name: name,
       pokemon: pokemon._id,
       filePath: `pokearts/fanarts/${pokeart.uuid}${pokeart.field}${pokemon._id}.png`,
       author: author._id,
     });
-      fileUtils.renameFile(pokeart.file, `pokearts/fanarts/${pokeart.uuid}${pokeart.field}${pokemon._id}.png`)
-      fileUtils.removeFolder(`pokearts/${pokeart.uuid}`)
     
     let pokeArt = await newPokeArt.save();
     return pokeArt;
@@ -91,7 +92,7 @@ async function getUserArts(author){
 
 async function getPendingArts(){
   let pendingArts = await PokeArt.find({reviewed: false}).populate("author").populate('pokemon')
-  for(art in pendingArts){
+  for(art of pendingArts){
     buildPokeArtUrl(art)
   }
   return pendingArts;

@@ -30,15 +30,14 @@ async function addPokeArt(req, res) {
   let file = req.files.image;
   let pokeId = req.body.pokemon;
   let name = req.body.artName;
-
   //add author later
   try {
     let pokeArt = await PokeArtService.addPokeArt(file, pokeId, name, author);
     res.json(pokeArt);
   } catch (e) {
     res.status(403).json({ error: e });
-    fileUtils.removeFile(file.file);
   }
+  fileUtils.removeFolder(`pokearts/${file.uuid}`)
 }
 
 /**

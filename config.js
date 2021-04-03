@@ -12,6 +12,7 @@ const config = {
   SPA_URL: process.env.SPA_URL,
   AWS_KEY: process.env.AWS_KEY,
   AWS_SECRET: process.env.AWS_SECRET,
-  CLOUDFRONT_URL: process.env.CLOUDFRONT_URL
+  CLOUDFRONT_URL: process.env.CLOUDFRONT_URL,
+  AWS_BUCKET: process.env.AWS_BUCKET
 };
 module.exports = config

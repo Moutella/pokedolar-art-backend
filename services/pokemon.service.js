@@ -33,6 +33,8 @@ async function getPokemon(pokeid) {
     ]);
     for(art of pokemon.officialPokeArts){
       buildPokeArtUrl(art)
+    }for(art of pokemon.pokeArts){
+      buildPokeArtUrl(art)
     }
     return pokemon
   } catch (e) {
