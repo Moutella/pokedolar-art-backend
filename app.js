@@ -17,10 +17,10 @@ const routes = require("./routes");
 
 const app = new Express();
 
-var privateKey  = fs.readFileSync(__dirname + '/cert/server.key', 'utf8');
-var certificate = fs.readFileSync(__dirname + '/cert/server.crt', 'utf8');
+// var privateKey  = fs.readFileSync(__dirname + '/cert/privkey.pem', 'utf8');
+// var certificate = fs.readFileSync(__dirname + '/cert/cert.pem', 'utf8');
 
-var credentials = {key: privateKey, cert: certificate};
+// var credentials = {key: privateKey, cert: certificate};
 
 app.use(helmet());
 mongoose.connect(serverConfig.mongoURL, {
@@ -46,9 +46,9 @@ app.use(passport.session());
 
 app.use(
   cors({
-    origin: "https://pokedolar.art", // allow to server to accept request from different origin
+    origin: ["https://pokedolar.art", "http://10.0.0.102:3000"],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true, // allow session cookie from browser to pass through
+    credentials: true,
   })
 );
 
@@ -73,19 +73,21 @@ app.use("/", routes);
 app.use("/static", Express.static(__dirname + "/public"));
 app.use("/pokearts", Express.static(__dirname + "/pokearts"));
 
-let httpsServer = https.createServer(credentials, app);
+// let httpsServer = https.createServer(credentials, app);
 
-httpsServer.listen(serverConfig.port, () =>
-  console.log(`Example app listening at http://localhost:${serverConfig.port}`)
-);
+// httpsServer.listen(serverConfig.port, () =>
+  console.log(`Pokedolar listening at ${serverConfig.port}`)
+// );
 
-let dollarJob = new CronJob("* 9-17 * * 1-5", async () => {
-  console.log("Update current dollar")
+app.listen(serverConfig.port, () => {
+  console.log(`Pokedolar listening at ${serverConfig.port}`)
+})
+
+let dollarJob = new CronJob("* 9-18 * * 1-5", async () => {
   await PokeDolarService.updateCurrentDollar();
   currentMinute = new Date().getMinutes();
-  console.log(currentMinute);
-  if (currentMinute == 5 || currentMinute == 35){
-    console.log("twittou"); 
+
+  // if (currentMinute == 5 || currentMinute == 35){
     TwitterBotService.checkChangeAndTweet();
-  }
+  // }
 }, null, true, 'America/Sao_Paulo', null, true);

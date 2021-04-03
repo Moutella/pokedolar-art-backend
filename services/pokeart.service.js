@@ -1,18 +1,18 @@
+const serverConfig = require("../config");
 const PokeArt = require("../models/pokeart");
 const PokemonService = require("../services/pokemon.service");
 const Pokemon = require("../models/pokemon");
 const fileUtils = require("../utils/fileUtils");
 
-
 async function getRandomPokeArt() {
   try {
     let randomPoke = await PokeArt.findOne({ approved: true })
       .select(["id", "name", "filePath", "author", "createdAt", "pokemon"])
-      .sort("id")
       .populate("pokemon");
+    buildPokeArtUrl(randomPoke)
     return randomPoke;
   } catch (e) {
-    throw new Error("Could not get all pokemons, please try again later");
+    throw new Error("Could not get all arts, please try again later");
   }
 }
 
@@ -31,13 +31,15 @@ async function addPokeArt(pokeart, pokeid, name, author) {
     let pokeArt = await newPokeArt.save();
     return pokeArt;
   } catch (e) {
-    throw new Error("Could not save this pokemon to the database");
+    throw new Error("Could not save this art to the database");
   }
 }
 
 async function getPokeArt(pokeArtId) {
   try {
-    return await PokeArt.findOne({ _id: pokeArtId }).populate('author').populate('pokemon');
+    let art = await PokeArt.findOne({ _id: pokeArtId }).populate('author').populate('pokemon');
+    buildPokeArtUrl(art)
+    return art
   } catch (e) {
     throw new Error(`Could not find pokemon wth id ${pokeArtId}`);
   }
@@ -81,12 +83,22 @@ async function changeApprovalPokeArt(pokeArtId, approvalStatus) {
 
 async function getUserArts(author){
   let approvedArts = await PokeArt.find({author: author._id, approved: true})
+  for(art in approvedArts){
+    buildPokeArtUrl(art)
+  }
   return approvedArts;
 }
 
 async function getPendingArts(){
   let pendingArts = await PokeArt.find({reviewed: false}).populate("author").populate('pokemon')
+  for(art in pendingArts){
+    buildPokeArtUrl(art)
+  }
   return pendingArts;
+}
+
+function  buildPokeArtUrl(art){
+  art.filePath = serverConfig.CLOUDFRONT_URL + art.filePath
 }
 
 module.exports = {
