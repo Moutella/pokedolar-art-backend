@@ -12,6 +12,8 @@ class AWSUtils{
   }
 
   putFile(file, path){
+    console.log(serverConfig.AWS_KEY);
+    console.log(ServerCOnfig.AWS_SECRET);
     let params = {
       Bucket: serverConfig.AWS_BUCKET,
       Key: path,
