@@ -76,12 +76,12 @@ if (serverConfig.ENV == 'prod'){
   let httpsServer = https.createServer(credentials, app);
   
   httpsServer.listen(serverConfig.port, () =>
-    console.log(`Pokedolar listening at ${serverConfig.port}`)
+    console.log(`Pokedolar listening at PROD ${serverConfig.port}`)
   );
 }
 else {
 app.listen(serverConfig.port, () => {
-  console.log(`Pokedolar listening at ${serverConfig.port}`)
+  console.log(`Pokedolar listening at DEV ${serverConfig.port}`)
 })
 }
 

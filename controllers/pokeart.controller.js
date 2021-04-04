@@ -37,7 +37,7 @@ async function addPokeArt(req, res) {
   } catch (e) {
     res.status(403).json({ error: e });
   }
-  fileUtils.removeFolder(`pokearts/${file.uuid}`)
+  fileUtils.removeFolder(`pokearts`)
 }
 
 /**

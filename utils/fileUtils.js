@@ -1,7 +1,7 @@
 const fs = require('fs')
 
 function removeFile(filepath){
-  fs.unlink(filepath)
+  fs.unlinkSync(filepath)
 }
 
 function renameFile(file, newpath){

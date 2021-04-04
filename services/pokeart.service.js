@@ -28,7 +28,8 @@ async function addPokeArt(pokeart, pokeid, name, author) {
       filePath: `pokearts/fanarts/${pokeart.uuid}${pokeart.field}${pokemon._id}.png`,
       author: author._id,
     });
-    
+    console.log(pokeart);
+    fileUtils.removeFile(pokeart.file);
     let pokeArt = await newPokeArt.save();
     return pokeArt;
   } catch (e) {
