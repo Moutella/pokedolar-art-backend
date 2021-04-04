@@ -61,7 +61,7 @@ router
   .route("/twitter/callback")
   .get(
     passport.authenticate("twitter", {
-      successRedirect: serverConfig.SPA_URL+"user",
+      successRedirect: serverConfig.SPA_URL,
       failureRedirect: "/auth/login/failed"
     })
   );
