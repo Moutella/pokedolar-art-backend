@@ -39,7 +39,7 @@ async function addPokeArt(req, res) {
   }
 
   fileUtils.removeFile(file.file);
-  fileUtils.removeFolder(`pokearts/${file.uuid}`)
+  fileUtils.removeFolder(`pokearts`)
 }
 
 /**
