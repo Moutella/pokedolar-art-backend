@@ -74,6 +74,8 @@ router.route("/user/admin").post(passport.authenticate('jwt'), userController.ch
 //User views
 router.route("/user/:userId").get(userController.getUser)
 router.route("/user").get(userController.currentUser)
-
-
+router.route('/logout').get(function(req, res){
+  req.logout();
+  res.redirect(serverConfig.SPA_URL);
+});
 module.exports = router;

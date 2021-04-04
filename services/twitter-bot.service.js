@@ -1,10 +1,12 @@
 const fs = require("fs");
 const twit = require("twit");
+const axios = require('axios');
 
 const Pokemon = require("../models/pokemon");
 
 const PokeDolarService = require("./pokedolar.service");
-
+const PokemonService = require("./pokemon.service")
+const PokeArtService = require("./pokeart.service")
 const config = require("../config");
 const emojis = require("../utils/emojis");
 const randomRange = require("../utils/randomrange");
@@ -22,6 +24,8 @@ async function checkChangeAndTweet() {
   let valueChanged = 0;
   let changeString = "";
   let emoji = "";
+
+  // Definindo se subiu ou desceu o valor
   if (lastTweet != currentDollar) {
     if (currentDollar > lastTweet) {
       valueChanged = 1;
@@ -34,37 +38,37 @@ async function checkChangeAndTweet() {
     }
     PokeDolarService.updateLastTweetDollar(currentDollar);
   }
+  let dollarString = `${currentDollar}`.replace(".", '');
+  let dollarInt = parseInt(dollarString)
 
-  
   if (valueChanged) {
-    let pokemonCount = await Pokemon.find().count();
-    let pokemonId = parseInt(currentDollar * 100) % pokemonCount;
-    let pokemon = await Pokemon.findOne({ id: pokemonId })
-      .populate({ path: 'pokeArts', populate: {path: 'author'}})
-      .populate("officialPokeArts");
+    let pokemonCount = await Pokemon.find().countDocuments();
     
+    let pokemonId = dollarInt
+    if (dollarInt != pokemonCount){
+      pokemonId %= pokemonCount
+    }
+    let pokemon = await PokemonService.getPokemonTweet(pokemonId)
     let approvedArts = pokemon.officialPokeArts.concat(pokemon.pokeArts);
-    let pokeArt = approvedArts[randomRange(0, approvedArts.length)];
+    approvedArts = approvedArts.sort(function(a, b){return a.postAmount-b.postAmount})
+    let pokeArt = approvedArts[0];
 
     let authorText = "";
     if (pokeArt.isOfficial) {
       authorText = `Arte oficial por ${pokeArt.creatorText}`;
     } else {
-      let twitterId = pokeart.author.twitterId;
+      let twitterId = pokeArt.author.twitterId;
       let userData = await bot_twitter.get('users/show', {user_id: twitterId})
       let twitterUser = userData.data.screen_name;
-      authorText = `Arte de @${twitterUser}`;
+      authorText = `Fan-Art de @${twitterUser}`;
     }
     let textValue = `R$ ${currentDollar}`.replace(".", ",");
     let tweetString =
-      `O dólar ${changeString} para ${textValue} ${emoji}` +
+      `${config.ENV == 'debug' ? '[DEV] ' : ''}O dólar ${changeString} para ${textValue} ${emoji}` +
       `\n\n\n#${pokemonId} - ${pokemon.name}` +
       `\n${authorText}`;
     try {
-      const b64content = fs.readFileSync(pokeArt.filePath, {
-        encoding: "base64",
-      });
-
+      const b64content = await getBase64(pokeArt.filePath)
       bot_twitter.post(
         "media/upload",
         {
@@ -84,15 +88,24 @@ async function checkChangeAndTweet() {
             media_ids: [mediaIdStr],
           };
 
-          await bot_twitter.post("statuses/update", params);
-          console.log("Twittou");
-          console.log(tweetString);
+          let post = await bot_twitter.post("statuses/update", params);
+          
+          let tweetId = post.data.id_str;
+          PokeArtService.updateTweetAndCount(pokeArt._id, tweetId);
         }
       );
     } catch (e) {
       console.log(e);
     }
   }
+}
+
+async function getBase64(url) {
+  const img = await axios
+    .get(url, {
+      responseType: 'arraybuffer'
+    })
+  return Buffer.from(img.data, 'binary').toString('base64');
 }
 
 module.exports = {
