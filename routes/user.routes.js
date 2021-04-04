@@ -14,7 +14,7 @@ passport.use('twitter',
     {
       consumerKey: serverConfig.TWITTER_API_KEY,
       consumerSecret: serverConfig.TWITTER_API_SECRET,
-      callbackURL: "/twitter/callback", //will have to change to app url later
+      callbackURL: "https://api.pokedolar.art/twitter/callback", //will have to change to app url later
     },
     async function (token, tokenSecret, profile, cb) {
       let user = await User.findOne({twitterId:profile.id});
