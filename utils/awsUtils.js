@@ -7,11 +7,6 @@ class AWSUtils{
   }
 
   putFile(file, path){
-    awssdk.config.update({
-      accessKeyID: serverConfig.AWS_KEY,
-      secretAccessKey: serverConfig.AWS_SECRET
-      }
-    )
     let params = {
       Bucket: serverConfig.AWS_BUCKET,
       Key: path,
