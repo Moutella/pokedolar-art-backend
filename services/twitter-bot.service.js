@@ -6,6 +6,7 @@ const Pokemon = require("../models/pokemon");
 
 const PokeDolarService = require("./pokedolar.service");
 const PokemonService = require("./pokemon.service")
+const PokeArtService = require("./pokeart.service")
 const config = require("../config");
 const emojis = require("../utils/emojis");
 const randomRange = require("../utils/randomrange");
@@ -23,6 +24,7 @@ async function checkChangeAndTweet() {
   let valueChanged = 0;
   let changeString = "";
   let emoji = "";
+  currentDollar = '8.90'
 
   // Definindo se subiu ou desceu o valor
   if (lastTweet != currentDollar) {
@@ -49,20 +51,21 @@ async function checkChangeAndTweet() {
     }
     let pokemon = await PokemonService.getPokemonTweet(pokemonId)
     let approvedArts = pokemon.officialPokeArts.concat(pokemon.pokeArts);
-    let pokeArt = approvedArts[randomRange(0, approvedArts.length)];
+    approvedArts = approvedArts.sort(function(a, b){return a.postAmount-b.postAmount})
+    let pokeArt = approvedArts[0];
 
     let authorText = "";
     if (pokeArt.isOfficial) {
       authorText = `Arte oficial por ${pokeArt.creatorText}`;
     } else {
-      let twitterId = pokeart.author.twitterId;
+      let twitterId = pokeArt.author.twitterId;
       let userData = await bot_twitter.get('users/show', {user_id: twitterId})
       let twitterUser = userData.data.screen_name;
       authorText = `Fan-Art de @${twitterUser}`;
     }
     let textValue = `R$ ${currentDollar}`.replace(".", ",");
     let tweetString =
-      `O dólar ${changeString} para ${textValue} ${emoji}` +
+      `${config.ENV == 'debug' ? '[DEV] ' : ''}O dólar ${changeString} para ${textValue} ${emoji}` +
       `\n\n\n#${pokemonId} - ${pokemon.name}` +
       `\n${authorText}`;
     try {
@@ -86,9 +89,10 @@ async function checkChangeAndTweet() {
             media_ids: [mediaIdStr],
           };
 
-          await bot_twitter.post("statuses/update", params);
-          console.log("Twittou");
-          console.log(tweetString);
+          let post = await bot_twitter.post("statuses/update", params);
+          
+          let tweetId = post.data.id_str;
+          PokeArtService.updateTweetAndCount(pokeArt._id, tweetId);
         }
       );
     } catch (e) {

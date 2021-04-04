@@ -8,7 +8,7 @@ const AWSUtils = require('../utils/awsUtils')
 async function getRandomPokeArt() {
   try {
     let randomPoke = await PokeArt.findOne({ approved: true })
-      .select(["id", "name", "filePath", "author", "createdAt", "pokemon"])
+      .select(["id", "name", "filePath", "author", "createdAt", "pokemon", "lastTweet", "lastPosted"])
       .populate("pokemon");
     buildPokeArtUrl(randomPoke)
     return randomPoke;
@@ -98,6 +98,25 @@ async function getPendingArts(){
   return pendingArts;
 }
 
+async function updateTweetAndCount(pokeArtId, tweetId){
+  try {
+    let pokeArt = await PokeArt.findOne({ _id: pokeArtId });
+    let date = new Date();
+    if (!pokeArt.firstPosted) {
+      pokeArt.firstPosted = date;
+    }
+    pokeArt.postAmount += 1;
+    pokeArt.lastTweet = tweetId;
+    pokeArt.lastPosted = date
+
+    await Promise.all([pokeArt.save()]);
+    return true;
+  } catch (e) {
+    console.log(e);
+    throw new Error("Could not approve PokeArt");
+  }
+}
+
 function  buildPokeArtUrl(art){
   art.filePath = serverConfig.CLOUDFRONT_URL + art.filePath
 }
@@ -109,5 +128,6 @@ module.exports = {
   deletePokeArt,
   changeApprovalPokeArt,
   getUserArts,
-  getPendingArts
+  getPendingArts,
+  updateTweetAndCount
 };

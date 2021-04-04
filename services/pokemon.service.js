@@ -23,7 +23,14 @@ async function addPokemon(pokemon) {
 async function getPokemon(pokeid) {
   try {
     let pokemon = await Pokemon.findOne({ id: pokeid })
-    .populate("pokeArts").populate("officialPokeArts", 'filePath creatorText')
+    .populate({
+      path: "pokeArts", 
+      populate: {
+        path: 'author',
+        select: 'twitterId twitterDisplayName'
+      },
+     select: 'filePath author lastTweet lastPosted postAmount'})
+    .populate("officialPokeArts", 'filePath creatorText lastTweet lastPosted postAmount')
     .select([
       "id",
       "name",
@@ -50,6 +57,8 @@ async function getPokemonTweet(pokemonId){
       .populate("officialPokeArts");
 
     for(art of pokemon.officialPokeArts){
+      buildPokeArtUrl(art)
+    }for(art of pokemon.pokeArts){
       buildPokeArtUrl(art)
     }
     return pokemon

@@ -17,10 +17,6 @@ const routes = require("./routes");
 
 const app = new Express();
 
-// var privateKey  = fs.readFileSync(__dirname + '/cert/privkey.pem', 'utf8');
-// var certificate = fs.readFileSync(__dirname + '/cert/cert.pem', 'utf8');
-
-// var credentials = {key: privateKey, cert: certificate};
 
 app.use(helmet());
 mongoose.connect(serverConfig.mongoURL, {
@@ -73,15 +69,21 @@ app.use("/", routes);
 app.use("/static", Express.static(__dirname + "/public"));
 app.use("/pokearts", Express.static(__dirname + "/pokearts"));
 
-// let httpsServer = https.createServer(credentials, app);
-
-// httpsServer.listen(serverConfig.port, () =>
-  console.log(`Pokedolar listening at ${serverConfig.port}`)
-// );
-
+if (serverConfig.ENV == 'prod'){
+  var privateKey  = fs.readFileSync(__dirname + '/cert/privkey.pem', 'utf8');
+  var certificate = fs.readFileSync(__dirname + '/cert/cert.pem', 'utf8');
+  var credentials = {key: privateKey, cert: certificate};
+  let httpsServer = https.createServer(credentials, app);
+  
+  httpsServer.listen(serverConfig.port, () =>
+    console.log(`Pokedolar listening at ${serverConfig.port}`)
+  );
+}
+else {
 app.listen(serverConfig.port, () => {
   console.log(`Pokedolar listening at ${serverConfig.port}`)
 })
+}
 
 let dollarJob = new CronJob("* 9-18 * * 1-5", async () => {
   await PokeDolarService.updateCurrentDollar();

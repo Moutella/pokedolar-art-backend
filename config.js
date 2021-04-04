@@ -13,6 +13,7 @@ const config = {
   AWS_KEY: process.env.AWS_KEY,
   AWS_SECRET: process.env.AWS_SECRET,
   CLOUDFRONT_URL: process.env.CLOUDFRONT_URL,
-  AWS_BUCKET: process.env.AWS_BUCKET
+  AWS_BUCKET: process.env.AWS_BUCKET,
+  ENV: process.env.ENV || 'debug'
 };
 module.exports = config
