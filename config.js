@@ -9,6 +9,11 @@ const config = {
   BOT_TWITTER_CONSUMER_SECRET: process.env.BOT_TWITTER_CONSUMER_SECRET,
   BOT_TWITTER_TOKEN: process.env.BOT_TWITTER_TOKEN,
   BOT_TWITTER_SECRET: process.env.BOT_TWITTER_SECRET,
-  SPA_URL: process.env.SPA_URL
+  SPA_URL: process.env.SPA_URL,
+  AWS_KEY: process.env.AWS_KEY,
+  AWS_SECRET: process.env.AWS_SECRET,
+  CLOUDFRONT_URL: process.env.CLOUDFRONT_URL,
+  AWS_BUCKET: process.env.AWS_BUCKET,
+  ENV: process.env.ENV || 'debug'
 };
 module.exports = config
