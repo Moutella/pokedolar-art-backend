@@ -13,8 +13,6 @@ class AWSUtils{
       Body: fs.readFileSync(file)
     }
     this.s3.putObject(params, function (err, data) {
-      console.log(data)
-      console.log(err)
       if (err) throw "falha de upload";
     });
   }

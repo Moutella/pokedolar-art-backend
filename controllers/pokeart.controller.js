@@ -38,8 +38,8 @@ async function addPokeArt(req, res) {
     res.status(403).json({ error: e });
   }
 
-  // fileUtils.removeFile(file.file);
-  // fileUtils.removeFolder(`pokearts`)
+  fileUtils.removeFile(file.file);
+  fileUtils.removeFolder(`pokearts`)
 }
 
 /**
