@@ -24,7 +24,6 @@ async function checkChangeAndTweet() {
   let valueChanged = 0;
   let changeString = "";
   let emoji = "";
-  currentDollar = '8.90'
 
   // Definindo se subiu ou desceu o valor
   if (lastTweet != currentDollar) {
