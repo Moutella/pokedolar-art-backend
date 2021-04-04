@@ -29,7 +29,6 @@ async function addPokeArt(pokeart, pokeid, name, author) {
       author: author._id,
     });
     console.log(pokeart);
-    fileUtils.removeFile(pokeart.file);
     let pokeArt = await newPokeArt.save();
     return pokeArt;
   } catch (e) {
