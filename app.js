@@ -11,7 +11,9 @@ const bb = require("express-busboy");
 const mongoose = require("mongoose");
 
 const TwitterBotService = require('./services/twitter-bot.service');
+const TwitterDogeService = require("./services/twitter-bot-doge.service")
 const PokeDolarService =  require('./services/pokedolar.service')
+const PokeDogeService =  require('./services/pokedoge.service')
 const serverConfig = require("./config");
 const routes = require("./routes");
 
@@ -85,11 +87,16 @@ app.listen(serverConfig.port, () => {
 })
 }
 
-let dollarJob = new CronJob("* 9-18 * * 1-5", async () => {
+let dollarJob = new CronJob("5,35 9-18 * * 1-5", async () => {
   await PokeDolarService.updateCurrentDollar();
-  currentMinute = new Date().getMinutes();
+  TwitterBotService.checkChangeAndTweet();
+}, null, true, 'America/Sao_Paulo', null, false);
 
-  // if (currentMinute == 5 || currentMinute == 35){
-    TwitterBotService.checkChangeAndTweet();
-  // }
-}, null, true, 'America/Sao_Paulo', null, true);
+
+
+let dogeJob = new CronJob("20,50 * * * *", async () => {
+  await PokeDogeService.updateCurrentDoge();
+  TwitterDogeService.checkChangeAndTweet();
+}, null, true, 'America/Sao_Paulo', null, false);
+
+
