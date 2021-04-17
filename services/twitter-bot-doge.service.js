@@ -58,7 +58,7 @@ async function checkChangeAndTweet() {
     }
     let textValue = `R$ ${currentDoge}`.replace(".", ",");
     let tweetString =
-      `${config.ENV == 'debug' ? '[DEV] ' : ''}A Dogecoin ${changeString} para ${textValue}` +
+      `${config.ENV == 'debug' ? '[DEV] ' : ''}Dogecoin ${changeString} para ${textValue}` +
       `\n\n\n#${pokemonId} - ${pokemon.name}` +
       `\n${authorText}`;
     try {
