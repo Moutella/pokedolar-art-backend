@@ -45,7 +45,7 @@ async function checkChangeAndTweet() {
     let pokemon = await PokemonService.getPokemonTweet(pokemonId)
     let approvedArts = pokemon.officialPokeArts.concat(pokemon.pokeArts);
     approvedArts = approvedArts.sort(function(a, b){return a.postAmount-b.postAmount})
-    let pokeArt = approvedArts[0];
+    let pokeArt = approvedArts[Math.floor(Math.random() * approvedArts.length)];
 
     let authorText = "";
     if (pokeArt.isOfficial) {
