@@ -30,7 +30,7 @@
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-twitter": "^1.0.4",
-    "sanitize-html": "^1.27.0",
+    "sanitize-html": "^2.3.2",
     "twit": "^2.2.11"
   },
   "devDependencies": {
