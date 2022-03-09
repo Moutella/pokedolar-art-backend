@@ -21,6 +21,39 @@ provider:
     POKEDOGE_BOT_TWITTER_TOKEN: ${env:POKEDOGE_BOT_TWITTER_TOKEN}
     POKEDOGE_BOT_TWITTER_SECRET: ${env:POKEDOGE_BOT_TWITTER_SECRET}
     TWITTER_CALLBACK_URL: ${env:TWITTER_CALLBACK_URL}
+    AWS_BUCKET: ${env:AWS_BUCKET}
+    SPA_URL: ${env:SPA_URL}
+    CLOUDFRONT_URL: ${env:CLOUDFRONT_URL}
+    MONGO_URL: ${env:MONGO_URL}
+  iam:
+    role:
+      statements:
+        - Effect: 'Allow'
+          Action:
+            - 's3:ListBucket'
+          Resource:
+            Fn::Join:
+              - ''
+              - - 'arn:aws:s3:::'
+                - Ref: ServerlessDeploymentBucket
+        - Effect: 'Allow'
+          Action:
+            - 's3:PutObject'
+          Resource:
+            Fn::Join:
+              - ''
+              - - 'arn:aws:s3:::'
+                - Ref: ServerlessDeploymentBucket
+                - '/*'
+        - Effect: 'Allow'
+          Action:
+            - 's3:PutObject'
+          Resource:
+            Fn::Join:
+              - ''
+              - - 'arn:aws:s3:::'
+                - ${env:AWS_BUCKET}
+                - '/*'
 functions:
   dollarJob:
     handler: app/app.dollarJob
