@@ -12,7 +12,7 @@ async function getRandomPokeArt(req, res) {
     let returnValue = await PokeArtService.getRandomPokeArt();
     return res.json(returnValue);
   } catch (e) {
-    return res.json({ error: e });
+    return res.json({ error: e.message });
   }
 }
 
@@ -35,7 +35,7 @@ async function addPokeArt(req, res) {
     let pokeArt = await PokeArtService.addPokeArt(file, pokeId, name, author);
     res.json(pokeArt);
   } catch (e) {
-    res.status(403).json({ error: e });
+    res.status(403).json({ error: e.message });
   }
 
   fileUtils.removeFile(file.file);
@@ -57,7 +57,7 @@ async function getPokeArt(req, res) {
     let pokeart = await PokeArtService.getPokeArt(artid);
     return res.json(pokeart);
   } catch (e) {
-    res.status(403).json({ error: e });
+    res.status(403).json({ error: e.message });
   }
 }
 
@@ -78,7 +78,7 @@ async function deletePokeArt(req, res) {
       success: `Successfuly deleted ${pokeArtId}:${deleted.name}`,
     });
   } catch (e) {
-    return res.status(403).json({ error: e });
+    return res.status(403).json({ error: e.message });
   }
 }
 
@@ -96,7 +96,7 @@ async function changeApprovalPokeArt(req, res) {
     }
     return res.json({ success: `${status_string} pokeart ${pokeArtId}` });
   } catch (e) {
-    return res.status(403).json({ error: e });
+    return res.status(403).json({ error: e.message });
   }
 }
 

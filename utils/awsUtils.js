@@ -3,7 +3,7 @@ const serverConfig = require("../config")
 const fs = require('fs')
 class AWSUtils{
   constructor(){
-    this.s3 = new awssdk.S3({accessKeyId: serverConfig.AWS_KEY, secretAccessKey: serverConfig.AWS_SECRET})
+    this.s3 = new awssdk.S3({})
   }
 
   putFile(file, path){

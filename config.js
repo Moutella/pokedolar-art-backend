@@ -13,8 +13,6 @@ const config = {
   POKEDOGE_BOT_TWITTER_SECRET: process.env.POKEDOGE_BOT_TWITTER_SECRET,
   TWITTER_CALLBACK_URL: process.env.TWITTER_CALLBACK_URL,
   SPA_URL: process.env.SPA_URL,
-  AWS_KEY: process.env.AWS_KEY,
-  AWS_SECRET: process.env.AWS_SECRET,
   CLOUDFRONT_URL: process.env.CLOUDFRONT_URL,
   AWS_BUCKET: process.env.AWS_BUCKET,
   ENV: process.env.ENV || 'debug'

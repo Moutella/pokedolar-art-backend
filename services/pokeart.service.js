@@ -42,7 +42,7 @@ async function getPokeArt(pokeArtId) {
     buildPokeArtUrl(art)
     return art
   } catch (e) {
-    throw new Error(`Could not find pokemon wth id ${pokeArtId}`);
+    throw new Error(`Could not find art with id ${pokeArtId}`);
   }
 }
 async function deletePokeArt(pokeArtId) {

@@ -1,7 +1,8 @@
-const CronJob = require("cron").CronJob;
-const https = require('https');
-const fs = require('fs');
+// const CronJob = require("cron").CronJob;
+const https = require("https");
+const fs = require("fs");
 const Express = require("express");
+const serverless = require("serverless-http");
 const passport = require("passport");
 const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
@@ -10,15 +11,10 @@ const helmet = require("helmet");
 const bb = require("express-busboy");
 const mongoose = require("mongoose");
 
-const TwitterBotService = require('./services/twitter-bot.service');
-const TwitterDogeService = require("./services/twitter-bot-doge.service")
-const PokeDolarService =  require('./services/pokedolar.service')
-const PokeDogeService =  require('./services/pokedoge.service')
 const serverConfig = require("./config");
 const routes = require("./routes");
 
 const app = new Express();
-
 
 app.use(helmet());
 mongoose.connect(serverConfig.mongoURL, {
@@ -32,11 +28,13 @@ bb.extend(app, {
   path: __dirname + "/pokearts",
   allowedPath: /./,
 });
-app.use(cookieSession({
-  name: "session",
-  keys: [serverConfig.SECRET],
-  maxAge: 24 * 60 * 60 * 100
-}));
+app.use(
+  cookieSession({
+    name: "session",
+    keys: [serverConfig.SECRET],
+    maxAge: 24 * 60 * 60 * 100,
+  })
+);
 app.use(cookieParser());
 
 app.use(passport.initialize());
@@ -71,32 +69,34 @@ app.use("/", routes);
 app.use("/static", Express.static(__dirname + "/public"));
 app.use("/pokearts", Express.static(__dirname + "/pokearts"));
 
-if (serverConfig.ENV == 'prod'){
-  var privateKey  = fs.readFileSync(__dirname + '/cert/privkey.pem', 'utf8');
-  var certificate = fs.readFileSync(__dirname + '/cert/cert.pem', 'utf8');
-  var credentials = {key: privateKey, cert: certificate};
+if (serverConfig.ENV == "prod") {
+  var privateKey = fs.readFileSync(__dirname + "/cert/privkey.pem", "utf8");
+  var certificate = fs.readFileSync(__dirname + "/cert/cert.pem", "utf8");
+  var credentials = { key: privateKey, cert: certificate };
   let httpsServer = https.createServer(credentials, app);
-  
+
   httpsServer.listen(serverConfig.port, () =>
     console.log(`Pokedolar listening at PROD ${serverConfig.port}`)
   );
-}
-else {
-app.listen(serverConfig.port, () => {
-  console.log(`Pokedolar listening at DEV ${serverConfig.port}`)
-})
+} else if (serverConfig.ENV == "lambda") {
+  module.exports.handler = serverless(app);
+} else {
+  app.listen(serverConfig.port, () => {
+    console.log(`Pokedolar listening at DEV ${serverConfig.port}`);
+  });
 }
 
-let dollarJob = new CronJob("5,35 9-18 * * 1-5", async () => {
+module.exports.dollarJob = async (event) => {
+  const TwitterBotService = require('./services/twitter-bot.service');
+  const PokeDolarService =  require('./services/pokedolar.service')
   await PokeDolarService.updateCurrentDollar();
   TwitterBotService.checkChangeAndTweet();
-}, null, true, 'America/Sao_Paulo', null, false);
+}
 
-
-
-let dogeJob = new CronJob("20,50 * * * *", async () => {
-  await PokeDogeService.updateCurrentDoge();
+module.exports.dogeJob = async (event) => {
+  const TwitterDogeService = require("./services/twitter-bot-doge.service")
+  const PokeDogeService =  require('./services/pokedoge.service')
+  await PokeDogeService.updateCurrentDollar();
   TwitterDogeService.checkChangeAndTweet();
-}, null, true, 'America/Sao_Paulo', null, false);
-
+}
 
