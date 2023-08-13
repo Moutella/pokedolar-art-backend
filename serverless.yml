@@ -11,15 +11,11 @@ provider:
   lambdaHashingVersion: "20201221"
   environment:
     ENV: lambda
-    TWITTER_API_KEY: ${env:TWITTER_API_KEY}
-    TWITTER_API_SECRET: ${env:TWITTER_API_SECRET}
     SECRET: ${env:SECRET}
-    BOT_TWITTER_CONSUMER_KEY: ${env:BOT_TWITTER_CONSUMER_KEY}
-    BOT_TWITTER_CONSUMER_SECRET: ${env:BOT_TWITTER_CONSUMER_SECRET}
-    BOT_TWITTER_TOKEN: ${env:BOT_TWITTER_TOKEN}
-    BOT_TWITTER_SECRET: ${env:BOT_TWITTER_SECRET}
-    POKEDOGE_BOT_TWITTER_TOKEN: ${env:POKEDOGE_BOT_TWITTER_TOKEN}
-    POKEDOGE_BOT_TWITTER_SECRET: ${env:POKEDOGE_BOT_TWITTER_SECRET}
+    BOT_APP_KEY: ${env:BOT_APP_KEY}
+    BOT_APP_SECRET: ${env:BOT_APP_SECRET}
+    BOT_ACCESS_TOKEN: ${env:BOT_ACCESS_TOKEN}
+    BOT_ACCESS_SECRET: ${env:BOT_ACCESS_SECRET}
     TWITTER_CALLBACK_URL: ${env:TWITTER_CALLBACK_URL}
     AWS_BUCKET: ${env:AWS_BUCKET}
     SPA_URL: ${env:SPA_URL}
@@ -60,7 +56,7 @@ functions:
     timeout: 30
     events:
     - schedule:
-        rate: cron(3 * ? * * *)
+        rate: cron(0 9,13,18 ? * 1-5 *)
   app:
     handler: app/app.handler
     events: 
