@@ -12,13 +12,6 @@ const config = require("../config");
 const emojis = require("../utils/emojis");
 const randomRange = require("../utils/randomrange");
 
-console.log({
-  appKey: config.BOT_APP_KEY,
-  appSecret: config.BOT_APP_SECRET,
-  accessToken: config.BOT_ACCESS_TOKEN,
-  accessSecret: config.BOT_ACCESS_SECRET,
-});
-
 const client = new TwitterApi({
   appKey: config.BOT_APP_KEY,
   appSecret: config.BOT_APP_SECRET,
