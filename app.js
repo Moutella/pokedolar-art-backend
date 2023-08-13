@@ -16,7 +16,7 @@ const routes = require("./routes");
 
 const app = new Express();
 
-app.use(helmet());
+// app.use(helmet());
 mongoose.connect(serverConfig.mongoURL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -40,13 +40,13 @@ app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(
-  cors({
-    origin: ["https://pokedolar.art", "http://10.0.0.102:3000"],
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: ["https://pokedolar.art", "http://localhost:3000/"],
+//     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+//     credentials: true,
+//   })
+// );
 
 // Initialize Passport and restore authentication state, if any, from the
 // session.
@@ -69,34 +69,16 @@ app.use("/", routes);
 app.use("/static", Express.static(__dirname + "/public"));
 app.use("/pokearts", Express.static(__dirname + "/pokearts"));
 
-if (serverConfig.ENV == "prod") {
-  var privateKey = fs.readFileSync(__dirname + "/cert/privkey.pem", "utf8");
-  var certificate = fs.readFileSync(__dirname + "/cert/cert.pem", "utf8");
-  var credentials = { key: privateKey, cert: certificate };
-  let httpsServer = https.createServer(credentials, app);
+module.exports.handler = serverless(app);
 
-  httpsServer.listen(serverConfig.port, () =>
-    console.log(`Pokedolar listening at PROD ${serverConfig.port}`)
-  );
-} else if (serverConfig.ENV == "lambda") {
-  module.exports.handler = serverless(app);
-} else {
-  app.listen(serverConfig.port, () => {
-    console.log(`Pokedolar listening at DEV ${serverConfig.port}`);
-  });
-}
-
-module.exports.dollarJob = async (event) => {
-  const TwitterBotService = require('./services/twitter-bot.service');
-  const PokeDolarService =  require('./services/pokedolar.service')
+dollarMethod = async (event) => {
+  console.log(event);
+  const TwitterBotService = require("./services/twitter-bot.service");
+  const PokeDolarService = require("./services/pokedolar.service");
   await PokeDolarService.updateCurrentDollar();
-  TwitterBotService.checkChangeAndTweet();
-}
+  await TwitterBotService.checkChangeAndTweet();
+};
 
-module.exports.dogeJob = async (event) => {
-  const TwitterDogeService = require("./services/twitter-bot-doge.service")
-  const PokeDogeService =  require('./services/pokedoge.service')
-  await PokeDogeService.updateCurrentDollar();
-  TwitterDogeService.checkChangeAndTweet();
-}
+module.exports.dollarJob = dollarMethod;
 
+// dollarMethod();
