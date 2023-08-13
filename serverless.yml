@@ -1,0 +1,70 @@
+service: pokemon
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: us-east-1
+  memorySize: 128
+  lambdaHashingVersion: "20201221"
+  environment:
+    ENV: lambda
+    SECRET: ${env:SECRET}
+    BOT_APP_KEY: ${env:BOT_APP_KEY}
+    BOT_APP_SECRET: ${env:BOT_APP_SECRET}
+    BOT_ACCESS_TOKEN: ${env:BOT_ACCESS_TOKEN}
+    BOT_ACCESS_SECRET: ${env:BOT_ACCESS_SECRET}
+    TWITTER_CALLBACK_URL: ${env:TWITTER_CALLBACK_URL}
+    AWS_BUCKET: ${env:AWS_BUCKET}
+    SPA_URL: ${env:SPA_URL}
+    CLOUDFRONT_URL: ${env:CLOUDFRONT_URL}
+    MONGO_URL: ${env:MONGO_URL}
+  iam:
+    role:
+      statements:
+        - Effect: 'Allow'
+          Action:
+            - 's3:ListBucket'
+          Resource:
+            Fn::Join:
+              - ''
+              - - 'arn:aws:s3:::'
+                - Ref: ServerlessDeploymentBucket
+        - Effect: 'Allow'
+          Action:
+            - 's3:PutObject'
+          Resource:
+            Fn::Join:
+              - ''
+              - - 'arn:aws:s3:::'
+                - Ref: ServerlessDeploymentBucket
+                - '/*'
+        - Effect: 'Allow'
+          Action:
+            - 's3:PutObject'
+          Resource:
+            Fn::Join:
+              - ''
+              - - 'arn:aws:s3:::'
+                - ${env:AWS_BUCKET}
+                - '/*'
+functions:
+  dollarJob:
+    handler: app/app.dollarJob
+    timeout: 30
+    events:
+    - schedule:
+        rate: cron(0 12,16,21 ? * 1-5 *)
+  app:
+    handler: app/app.handler
+    events: 
+      - http: 
+          path: /
+          method: ANY
+          cors: true
+      - http: 
+          path: /{proxy+}
+          method: ANY
+          cors: true

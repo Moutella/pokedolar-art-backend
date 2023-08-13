@@ -12,7 +12,7 @@ async function getPokemons(req, res) {
     returnValue = await PokemonService.getPokemons();
     res.json(returnValue);
   } catch (e) {
-    return res.json({ error: e });
+    return res.json({ error: e.message });
   }
 }
 
@@ -23,8 +23,8 @@ async function getPokemons(req, res) {
  * @returns void
  */
 async function addPokemon(req, res) {
-  if (!req.user.admin){
-    res.status(403)
+  if (!req.user.admin) {
+    res.status(403);
   }
   if (!req.body.name || !req.body.id) {
     res.status(403).end();
@@ -38,7 +38,7 @@ async function addPokemon(req, res) {
     let newPokemon = await PokemonService.addPokemon(pokemon);
     res.json({ success: true, pokemon: newPokemon });
   } catch (e) {
-    res.status(403).json({ error: e });
+    res.status(403).json({ error: e.message });
   }
 }
 
@@ -49,17 +49,16 @@ async function addPokemon(req, res) {
  * @returns void
  */
 async function getPokemon(req, res) {
-  if (!req.params.pokeid){
+  if (!req.params.pokeid) {
     res.status(403).end();
   }
 
   try {
-    let pokeid = req.params.pokeid
+    let pokeid = req.params.pokeid;
     let pokemon = await PokemonService.getPokemon(pokeid);
     return res.json(pokemon);
-  }
-  catch (e) {
-    res.status(403).json({ error: e });
+  } catch (e) {
+    res.status(403).json({ error: e.message });
   }
 }
 
@@ -76,9 +75,10 @@ async function deletePokemon(req, res) {
   let pokeid = req.body.pokemon.id;
   try {
     let deleted = await PokemonService.deletePokemon(pokeid);
-    return res.json({success: `Successfuly deleted ${pokeid}:${deleted.name}`})
-  }
-  catch (e){
+    return res.json({
+      success: `Successfuly deleted ${pokeid}:${deleted.name}`,
+    });
+  } catch (e) {
     res.status(403).json({ error: e.message });
   }
 }
