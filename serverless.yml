@@ -56,7 +56,7 @@ functions:
     timeout: 30
     events:
     - schedule:
-        rate: cron(0 9,13,18 ? * 1-5 *)
+        rate: cron(0 12,16,21 ? * 1-5 *)
   app:
     handler: app/app.handler
     events: 
