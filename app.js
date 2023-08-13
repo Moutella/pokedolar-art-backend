@@ -16,7 +16,14 @@ const routes = require("./routes");
 
 const app = new Express();
 
-// app.use(helmet());
+app.use(
+  cors({
+    origin: ["https://pokedolar.art", "http://localhost:3000"],
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
+  })
+);
+app.use(helmet());
 mongoose.connect(serverConfig.mongoURL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -39,14 +46,6 @@ app.use(cookieParser());
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-// app.use(
-//   cors({
-//     origin: ["https://pokedolar.art", "http://localhost:3000/"],
-//     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-//     credentials: true,
-//   })
-// );
 
 // Initialize Passport and restore authentication state, if any, from the
 // session.
